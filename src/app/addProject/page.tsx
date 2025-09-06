@@ -16,6 +16,18 @@ export default function AddProjectPage() {
     totalCredits: "",
     availableCredits: "",
     projectImages: [] as string[],
+    // Enhanced carbon credit fields
+    projectType: "",
+    methodology: "",
+    certificationStandard: "",
+    projectDeveloper: "",
+    startDate: "",
+    endDate: "",
+    estimatedCO2Reduction: "",
+    country: "",
+    coordinates: "",
+    additionalBenefits: "",
+    riskFactors: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +38,7 @@ export default function AddProjectPage() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -147,6 +159,7 @@ export default function AddProjectPage() {
       const pricePerCredit = parseFloat(form.pricePerCredit);
       const totalCredits = parseInt(form.totalCredits);
       const availableCredits = parseInt(form.availableCredits);
+      const estimatedCO2Reduction = parseFloat(form.estimatedCO2Reduction);
 
       if (isNaN(pricePerCredit) || pricePerCredit <= 0) {
         setError("Please enter a valid price per credit (greater than 0)");
@@ -165,6 +178,27 @@ export default function AddProjectPage() {
 
       if (availableCredits > totalCredits) {
         setError("Available credits cannot be greater than total credits");
+        return;
+      }
+
+      if (isNaN(estimatedCO2Reduction) || estimatedCO2Reduction <= 0) {
+        setError("Please enter a valid estimated CO2 reduction amount (greater than 0)");
+        return;
+      }
+
+      // Validate required enhanced fields
+      if (!form.projectType || !form.methodology || !form.certificationStandard || 
+          !form.projectDeveloper || !form.startDate || !form.endDate || !form.country) {
+        setError("Please fill in all required project details");
+        return;
+      }
+
+      // Validate dates
+      const startDate = new Date(form.startDate);
+      const endDate = new Date(form.endDate);
+      
+      if (startDate >= endDate) {
+        setError("Project end date must be after start date");
         return;
       }
 
@@ -196,7 +230,10 @@ export default function AddProjectPage() {
         pricePerCredit,
         totalCredits,
         availableCredits,
+        estimatedCO2Reduction,
         projectImages: allImageUrls,
+        startDate: new Date(form.startDate).toISOString(),
+        endDate: new Date(form.endDate).toISOString(),
       };
 
       const res = await fetch("/api/addProject", {
@@ -218,6 +255,18 @@ export default function AddProjectPage() {
           totalCredits: "",
           availableCredits: "",
           projectImages: [],
+          // Enhanced carbon credit fields
+          projectType: "",
+          methodology: "",
+          certificationStandard: "",
+          projectDeveloper: "",
+          startDate: "",
+          endDate: "",
+          estimatedCO2Reduction: "",
+          country: "",
+          coordinates: "",
+          additionalBenefits: "",
+          riskFactors: "",
         });
         setSelectedFiles([]);
         setImagePreviews([]);
@@ -261,7 +310,7 @@ export default function AddProjectPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-2">Add Carbon Credit Project</h1>
-            <p className="text-gray-600">Create a new project to generate and sell carbon credits</p>
+            <p className="text-gray-600">Create a comprehensive carbon credit project with full methodology details and verification information</p>
           </div>
 
           {/* Navigation */}
@@ -335,6 +384,206 @@ export default function AddProjectPage() {
                   onChange={handleChange} 
                   className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
                   required 
+                />
+              </div>
+
+              {/* Project Type and Country */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Type *
+                  </label>
+                  <select 
+                    name="projectType" 
+                    value={form.projectType} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors text-gray-800" 
+                    required 
+                  >
+                    <option value="">Select project type</option>
+                    <option value="Reforestation">Reforestation</option>
+                    <option value="Afforestation">Afforestation</option>
+                    <option value="Solar Energy">Solar Energy</option>
+                    <option value="Wind Energy">Wind Energy</option>
+                    <option value="Hydroelectric">Hydroelectric</option>
+                    <option value="Biogas">Biogas</option>
+                    <option value="Biomass">Biomass</option>
+                    <option value="Mangrove Restoration">Mangrove Restoration</option>
+                    <option value="Wetland Conservation">Wetland Conservation</option>
+                    <option value="Improved Cookstoves">Improved Cookstoves</option>
+                    <option value="Waste Management">Waste Management</option>
+                    <option value="Landfill Gas Capture">Landfill Gas Capture</option>
+                    <option value="Agricultural Practices">Agricultural Practices</option>
+                    <option value="Energy Efficiency">Energy Efficiency</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Country *
+                  </label>
+                  <input 
+                    type="text"
+                    name="country" 
+                    placeholder="e.g., Brazil" 
+                    value={form.country} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              {/* Methodology and Certification */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Carbon Methodology *
+                  </label>
+                  <input 
+                    type="text"
+                    name="methodology" 
+                    placeholder="e.g., VCS VM0006, CDM AR-AMS-0007" 
+                    value={form.methodology} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                    required 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Certification Standard *
+                  </label>
+                  <select 
+                    name="certificationStandard" 
+                    value={form.certificationStandard} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors text-gray-800" 
+                    required 
+                  >
+                    <option value="">Select standard</option>
+                    <option value="VCS">VCS (Verified Carbon Standard)</option>
+                    <option value="Gold Standard">Gold Standard</option>
+                    <option value="CDM">CDM (Clean Development Mechanism)</option>
+                    <option value="CAR">CAR (Climate Action Reserve)</option>
+                    <option value="ACR">ACR (American Carbon Registry)</option>
+                    <option value="Plan Vivo">Plan Vivo</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Project Developer and Estimated CO2 Reduction */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Developer *
+                  </label>
+                  <input 
+                    type="text"
+                    name="projectDeveloper" 
+                    placeholder="Organization or company name" 
+                    value={form.projectDeveloper} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                    required 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Estimated CO₂ Reduction (tonnes) *
+                  </label>
+                  <input 
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    name="estimatedCO2Reduction" 
+                    placeholder="10000" 
+                    value={form.estimatedCO2Reduction} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              {/* Project Timeline */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Start Date *
+                  </label>
+                  <input 
+                    type="date"
+                    name="startDate" 
+                    value={form.startDate} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors text-gray-800" 
+                    required 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project End Date *
+                  </label>
+                  <input 
+                    type="date"
+                    name="endDate" 
+                    value={form.endDate} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors text-gray-800" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              {/* Optional Coordinates */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  GPS Coordinates (Optional)
+                </label>
+                <input 
+                  type="text"
+                  name="coordinates" 
+                  placeholder="e.g., -3.4653, -62.2159" 
+                  value={form.coordinates} 
+                  onChange={handleChange} 
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                />
+                <p className="text-xs text-gray-500 mt-1">Format: latitude, longitude</p>
+              </div>
+
+              {/* Additional Benefits */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Additional Environmental/Social Benefits (Optional)
+                </label>
+                <textarea 
+                  name="additionalBenefits" 
+                  placeholder="e.g., Biodiversity conservation, local employment, soil improvement..." 
+                  value={form.additionalBenefits} 
+                  onChange={handleChange} 
+                  rows={3}
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 resize-vertical" 
+                />
+              </div>
+
+              {/* Risk Factors */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Risk Factors and Mitigation (Optional)
+                </label>
+                <textarea 
+                  name="riskFactors" 
+                  placeholder="Describe potential risks and how they will be mitigated..." 
+                  value={form.riskFactors} 
+                  onChange={handleChange} 
+                  rows={3}
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 resize-vertical" 
                 />
               </div>
 
@@ -503,15 +752,20 @@ export default function AddProjectPage() {
 
             {/* Info Section */}
             <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-blue-800 mb-2">💡 Project Guidelines</h3>
+              <h3 className="font-semibold text-blue-800 mb-2">💡 Carbon Credit Project Guidelines</h3>
               <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Ensure your project has verified carbon reduction impact</li>
+                <li>• Ensure your project follows recognized carbon methodologies (VCS, Gold Standard, CDM, etc.)</li>
+                <li>• Provide accurate CO₂ reduction estimates based on verified calculation methods</li>
                 <li>• Available credits should not exceed total credits</li>
-                <li>• Price per credit should reflect the market value and project quality</li>
-                <li>• Provide clear, detailed descriptions for better investor confidence</li>
-                <li>• Upload multiple high-quality images that showcase different aspects of your project</li>
-                <li>• Maximum 5 images per project - choose images that best represent your project</li>
+                <li>• Price per credit should reflect market rates and project quality/certification level</li>
+                <li>• Include detailed project descriptions for investor transparency</li>
+                <li>• Specify the exact methodology used for carbon quantification</li>
+                <li>• Project timeline should be realistic and achievable</li>
+                <li>• Upload high-quality images that showcase different aspects of your project</li>
+                <li>• Maximum 5 images per project - choose representative photos</li>
                 <li>• Images are stored securely on IPFS via Pinata for decentralized access</li>
+                <li>• Consider additional environmental and social benefits to attract ESG investors</li>
+                <li>• Be transparent about project risks and mitigation strategies</li>
               </ul>
             </div>
           </div>

@@ -17,6 +17,13 @@ interface CarbonProject {
   availableCredits: number;
   totalCredits: number;
   location: string;
+  // Enhanced carbon credit fields
+  projectType?: string;
+  certificationStandard?: string;
+  estimatedCO2Reduction?: number;
+  verificationStatus?: string;
+  projectStatus?: string;
+  country?: string;
 }
 
 interface CarbonProjectsDisplayProps {
@@ -67,6 +74,22 @@ const CarbonProjectsDisplay = ({
                     {/* Tags */}
                     <div className="mb-4 md:mb-6">
                       <div className="flex flex-wrap gap-2 text-xs uppercase tracking-wider">
+                        {project.projectType && (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                            {project.projectType}
+                          </span>
+                        )}
+                        {project.verificationStatus && (
+                          <span className={`px-2 py-1 rounded-full font-medium ${
+                            project.verificationStatus === 'verified' 
+                              ? 'bg-green-100 text-green-700' 
+                              : project.verificationStatus === 'pending'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {project.verificationStatus}
+                          </span>
+                        )}
                         {project.tags?.map((tag) => (
                           <span 
                             key={tag} 
@@ -102,6 +125,18 @@ const CarbonProjectsDisplay = ({
                         <Leaf className="size-4 mr-2 text-gray-500" />
                         <span>{project.availableCredits.toLocaleString()} of {project.totalCredits.toLocaleString()} credits available</span>
                       </div>
+                      {project.estimatedCO2Reduction && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="mr-2 text-gray-500">🌍</span>
+                          <span>{project.estimatedCO2Reduction.toLocaleString()} tonnes CO₂ reduction</span>
+                        </div>
+                      )}
+                      {project.certificationStandard && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="mr-2 text-gray-500">✓</span>
+                          <span>{project.certificationStandard} Certified</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Publication Date */}
@@ -175,4 +210,4 @@ const CarbonProjectsDisplay = ({
   );
 };
 
-export { CarbonProjectsDisplay };
+export default CarbonProjectsDisplay;

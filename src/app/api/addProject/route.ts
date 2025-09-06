@@ -45,7 +45,11 @@ export async function POST(req: Request) {
     }
 
     // Validate required fields
-    const requiredFields = ['title', 'description', 'location', 'pricePerCredit', 'totalCredits', 'availableCredits'];
+    const requiredFields = [
+      'title', 'description', 'location', 'pricePerCredit', 'totalCredits', 'availableCredits',
+      'projectType', 'methodology', 'certificationStandard', 'projectDeveloper', 
+      'startDate', 'endDate', 'estimatedCO2Reduction', 'country'
+    ];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
@@ -62,6 +66,7 @@ export async function POST(req: Request) {
     const pricePerCredit = parseFloat(body.pricePerCredit);
     const totalCredits = parseInt(body.totalCredits);
     const availableCredits = parseInt(body.availableCredits);
+    const estimatedCO2Reduction = parseFloat(body.estimatedCO2Reduction);
 
     if (isNaN(pricePerCredit) || pricePerCredit <= 0) {
       return NextResponse.json(
@@ -93,11 +98,45 @@ export async function POST(req: Request) {
       );
     }
 
+    if (isNaN(estimatedCO2Reduction) || estimatedCO2Reduction <= 0) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Estimated CO2 reduction must be a valid number greater than 0" 
+        }, 
+        { status: 400 }
+      );
+    }
+
     if (availableCredits > totalCredits) {
       return NextResponse.json(
         { 
           success: false, 
           error: "Available credits cannot be greater than total credits" 
+        }, 
+        { status: 400 }
+      );
+    }
+
+    // Validate dates
+    const startDate = new Date(body.startDate);
+    const endDate = new Date(body.endDate);
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Invalid date format provided" 
+        }, 
+        { status: 400 }
+      );
+    }
+
+    if (startDate >= endDate) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Project end date must be after start date" 
         }, 
         { status: 400 }
       );
@@ -148,6 +187,18 @@ export async function POST(req: Request) {
           totalCredits: totalCredits,
           availableCredits: availableCredits,
           projectImages: body.projectImages.map((url: string) => url.trim()),
+          // Enhanced carbon credit fields
+          projectType: body.projectType.trim(),
+          methodology: body.methodology.trim(),
+          certificationStandard: body.certificationStandard.trim(),
+          projectDeveloper: body.projectDeveloper.trim(),
+          startDate: startDate,
+          endDate: endDate,
+          estimatedCO2Reduction: estimatedCO2Reduction,
+          country: body.country.trim(),
+          coordinates: body.coordinates?.trim() || null,
+          additionalBenefits: body.additionalBenefits?.trim() || null,
+          riskFactors: body.riskFactors?.trim() || null,
         }
       })
     );
@@ -163,6 +214,19 @@ export async function POST(req: Request) {
         totalCredits: project.totalCredits,
         availableCredits: project.availableCredits,
         projectImages: project.projectImages,
+        projectType: project.projectType,
+        methodology: project.methodology,
+        certificationStandard: project.certificationStandard,
+        projectDeveloper: project.projectDeveloper,
+        startDate: project.startDate,
+        endDate: project.endDate,
+        estimatedCO2Reduction: project.estimatedCO2Reduction,
+        verificationStatus: project.verificationStatus,
+        projectStatus: project.projectStatus,
+        country: project.country,
+        coordinates: project.coordinates,
+        additionalBenefits: project.additionalBenefits,
+        riskFactors: project.riskFactors,
         createdAt: project.createdAt,
       },
       message: "Project created successfully"

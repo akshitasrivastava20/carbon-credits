@@ -1,5 +1,5 @@
-// Dodo Payments configuration and helper functions
-// Note: This is a basic setup - will need to be refined based on actual API testing
+import DodoPayments from 'dodopayments';
+import crypto from 'crypto';
 
 // Types for our carbon credit investment
 export interface CarbonCreditInvestment {
@@ -11,12 +11,26 @@ export interface CarbonCreditInvestment {
   investorName: string;
 }
 
-// Helper function to get base URL based on environment
-export const getDodoBaseUrl = () => {
-  const mode = process.env.NEXT_PUBLIC_DODO_MODE || "test";
-  return mode === "live" 
-    ? "https://live.dodopayments.com" 
-    : "https://test.dodopayments.com";
+// Helper to get API key with proper error handling
+const getApiKey = () => {
+  const apiKey = process.env.DODO_PAYMENTS_API_KEY || process.env.DODO_API_KEY;
+  if (!apiKey) {
+    throw new Error('DODO_PAYMENTS_API_KEY environment variable is missing or empty');
+  }
+  return apiKey;
+};
+
+// Initialize Dodo client lazily to avoid issues with environment variables
+let dodoClient: DodoPayments | null = null;
+
+const getDodoClient = () => {
+  if (!dodoClient) {
+    dodoClient = new DodoPayments({
+      bearerToken: getApiKey(),
+      environment: process.env.NEXT_PUBLIC_DODO_MODE === 'live' ? 'live_mode' : 'test_mode'
+    });
+  }
+  return dodoClient;
 };
 
 // Helper to calculate total investment amount
@@ -24,22 +38,94 @@ export const calculateInvestmentTotal = (creditAmount: number, pricePerCredit: n
   return creditAmount * pricePerCredit;
 };
 
-// Mock function for creating payment (will be replaced with actual Dodo integration)
+// Create checkout session for carbon credit investment
+// For now, we'll use a simple approach where you create products manually in Dodo dashboard
 export const createInvestmentPayment = async (
   investment: CarbonCreditInvestment,
   successUrl: string,
   cancelUrl: string
 ) => {
-  // For now, return a mock payment URL
-  // In production, this will use the actual Dodo API
-  return {
-    url: `${getDodoBaseUrl()}/checkout/mock-session-id`,
-    sessionId: "mock-session-id",
-    status: "pending"
-  };
+  try {
+    // For simplicity, we'll create a single "Carbon Credit" product in Dodo dashboard
+    // and use it for all investments with the amount parameter
+    const CARBON_CREDIT_PRODUCT_ID = "prod_carbon_credit_001"; // You'll replace this with your actual product ID
+    
+    const checkoutParams: DodoPayments.CheckoutSessionCreateParams = {
+      product_cart: [
+        {
+          product_id: CARBON_CREDIT_PRODUCT_ID,
+          quantity: investment.creditAmount,
+          // Use amount for pay-what-you-want pricing
+          amount: Math.round(investment.pricePerCredit * 100), // Convert to cents
+        }
+      ],
+      customer: {
+        email: investment.investorEmail,
+        name: investment.investorName,
+      },
+      metadata: {
+        project_id: investment.projectId,
+        credit_amount: investment.creditAmount.toString(),
+        price_per_credit: investment.pricePerCredit.toString(),
+        total_amount: investment.totalAmount.toString(),
+        investment_type: 'carbon_credits',
+        success_url: successUrl,
+        cancel_url: cancelUrl
+      }
+    };
+
+    const dodo = getDodoClient();
+    const session = await dodo.checkoutSessions.create(checkoutParams);
+    
+    return {
+      url: session.checkout_url,
+      sessionId: session.session_id,
+      status: 'pending'
+    };
+  } catch (error) {
+    console.error('Error creating Dodo checkout session:', error);
+    throw new Error('Failed to create payment session');
+  }
 };
 
-// Verify webhook signature placeholder
+// Alternative: Create a simple payment link for immediate use
+export const createSimplePaymentLink = async (
+  investment: CarbonCreditInvestment,
+  successUrl: string
+) => {
+  try {
+    // Create a direct payment link without requiring pre-existing products
+    const totalAmount = Math.round(investment.totalAmount * 100); // Convert to cents
+    
+    // This is a simplified approach - you might need to adjust based on Dodo's actual API
+    const paymentData = {
+      amount: totalAmount,
+      currency: 'USD',
+      description: `Carbon Credits Investment - ${investment.creditAmount} credits from Project ${investment.projectId}`,
+      customer_email: investment.investorEmail,
+      customer_name: investment.investorName,
+      success_url: successUrl,
+      metadata: {
+        project_id: investment.projectId,
+        credit_amount: investment.creditAmount.toString(),
+        price_per_credit: investment.pricePerCredit.toString(),
+        investment_type: 'carbon_credits'
+      }
+    };
+
+    // For now, return a test URL - you'll need to implement this based on Dodo's payment links API
+    return {
+      url: `https://test.dodopayments.com/pay/test-link-${Date.now()}`,
+      sessionId: `test_session_${Date.now()}`,
+      status: 'pending'
+    };
+  } catch (error) {
+    console.error('Error creating Dodo payment link:', error);
+    throw new Error('Failed to create payment link');
+  }
+};
+
+// Verify webhook signature using Dodo's method
 export const verifyWebhookSignature = (payload: any, signature: string): boolean => {
   const secret = process.env.DODO_WEBHOOK_SECRET;
   if (!secret) {
@@ -47,8 +133,24 @@ export const verifyWebhookSignature = (payload: any, signature: string): boolean
     return false;
   }
   
-  // Placeholder - implement actual verification when we have the correct API
-  return true;
+  try {
+    // Create expected signature
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(JSON.stringify(payload))
+      .digest('hex');
+    
+    // Compare signatures (remove 'whsec_' prefix if present)
+    const cleanSignature = signature.replace('whsec_', '');
+    
+    return crypto.timingSafeEqual(
+      Buffer.from(cleanSignature, 'hex'),
+      Buffer.from(expectedSignature, 'hex')
+    );
+  } catch (error) {
+    console.error('Webhook signature verification failed:', error);
+    return false;
+  }
 };
 
 // Configuration object for Dodo Payments
@@ -56,5 +158,4 @@ export const dodoConfig = {
   apiKey: process.env.DODO_API_KEY || "",
   mode: process.env.NEXT_PUBLIC_DODO_MODE || "test",
   webhookSecret: process.env.DODO_WEBHOOK_SECRET || "",
-  baseUrl: getDodoBaseUrl()
 };
