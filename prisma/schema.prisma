@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  clerkUserId String?  @unique
+  name        String
+  industry    String?
+  email       String   @unique
+  address     String?
+  certificateUrl String?
+  taxId       String?
+  status      String   @default("pending")
+  usages      Usage[]
+  investments Investment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Usage {
+  id        String    @id @default(cuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  type      UsageType
+  amount    Float     // e.g. kWh, liters, etc.
+  createdAt DateTime  @default(now())
+}
+
+enum UsageType {
+  ELECTRICITY
+  DIESEL
+  PETROL
+  NATURAL_GAS
+}
+
+model EmissionFactor {
+  id     String    @id @default(cuid())
+  type   UsageType @unique
+  factor Float     // kg CO₂ per unit
+  unit   String    // e.g. "kg CO₂ per kWh"
+}
+
+model Project {
+  id               String   @id @default(cuid())
+  title            String
+  description      String
+  location         String
+  pricePerCredit   Float
+  totalCredits     Int
+  availableCredits Int
+  projectImages    String[] // Array of image URLs
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  investments      Investment[]
+}
+
+model Investment {
+  id          String   @id @default(cuid())
+  companyId   String
+  projectId   String
+  creditsBought Int
+  totalPrice  Float
+  createdAt   DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
+}
+
+
+
+
