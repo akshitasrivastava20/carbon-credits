@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
         prisma.transaction.create({
           data: {
             investmentId: investmentRecord.id,
-            productId: "pdt_pTi3uI8TBUHEgRTqXT9Ep", // Use the Dodo product ID
+            // Skip productId for test mode since it's optional now
             companyId: company.id,
             amount: totalAmount,
             platformFee: platformFee,

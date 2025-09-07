@@ -129,7 +129,7 @@ model Product {
 model Transaction {
   id               String   @id @default(cuid())
   investmentId     String   @unique
-  productId        String
+  productId        String?  // Made optional for test mode
   companyId        String?  // Investor company
   
   // Dodo Payments integration
@@ -154,7 +154,7 @@ model Transaction {
   paidAt           DateTime?
   
   investment       Investment @relation(fields: [investmentId], references: [id])
-  product          Product    @relation(fields: [productId], references: [id])
+  product          Product?   @relation(fields: [productId], references: [id])
   company          Company?   @relation(fields: [companyId], references: [id])
   payouts          Payout[]
 }
