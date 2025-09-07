@@ -109,6 +109,9 @@ export async function POST(request: NextRequest) {
     // Create payment with Dodo Payments
     const paymentResult = await createInvestmentPayment(investment, successUrl, cancelUrl);
 
+    // Check if this is a test mode payment
+    const isTestMode = paymentResult.sessionId.startsWith('test_session_');
+
     // Check if company record exists, create if it doesn't
     let company = await withRetry(() => 
       prisma.company.findUnique({
@@ -141,6 +144,31 @@ export async function POST(request: NextRequest) {
         }
       })
     );
+
+    // For test mode, also create a transaction record immediately
+    if (isTestMode) {
+      const platformFee = totalAmount * 0.05; // 5% platform fee
+      const payoutAmount = totalAmount - platformFee;
+
+      await withRetry(() => 
+        prisma.transaction.create({
+          data: {
+            investmentId: investmentRecord.id,
+            productId: "pdt_pTi3uI8TBUHEgRTqXT9Ep", // Use the Dodo product ID
+            companyId: company.id,
+            amount: totalAmount,
+            platformFee: platformFee,
+            payoutAmount: payoutAmount,
+            creditsPurchased: creditAmount,
+            pricePerCredit: project.pricePerCredit,
+            status: "COMPLETED",
+            paymentStatus: "CAPTURED",
+            dodoSessionId: paymentResult.sessionId,
+            paidAt: new Date(),
+          }
+        })
+      );
+    }
 
     return NextResponse.json({
       success: true,
