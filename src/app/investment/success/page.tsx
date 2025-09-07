@@ -46,22 +46,29 @@ function InvestmentSuccessContent() {
   }, [searchParams]);
 
   const handleTestPayment = (sessionId: string) => {
-    // Simulate a successful test payment
+    // Get actual investment parameters from URL
+    const projectId = searchParams.get('project');
+    const creditAmount = parseInt(searchParams.get('credits') || '1');
+    const pricePerCredit = 25.00; // Default price for test mode
+    const totalPrice = creditAmount * pricePerCredit;
+    const platformFee = totalPrice * 0.05; // 5% platform fee
+    
+    // Simulate a successful test payment with actual data
     setInvestmentDetails({
       id: sessionId,
-      creditsBought: 10,
-      totalPrice: 250.00,
+      creditsBought: creditAmount,
+      totalPrice: totalPrice,
       project: {
-        title: "Test Carbon Credit Investment",
+        title: `Test Carbon Credit Investment (Project: ${projectId?.slice(-6)})`,
         projectDeveloper: "Test Developer",
-        pricePerCredit: 25.00
+        pricePerCredit: pricePerCredit
       },
       transaction: {
         id: sessionId,
-        amount: 250.00,
-        platformFee: 12.50,
-        payoutAmount: 237.50,
-        status: "completed",
+        amount: totalPrice,
+        platformFee: platformFee,
+        payoutAmount: totalPrice - platformFee,
+        status: "COMPLETED",
         paidAt: new Date().toISOString()
       }
     });

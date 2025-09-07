@@ -52,8 +52,14 @@ export const createInvestmentPayment = async (
     if (isTestMode) {
       // For test mode, create a mock payment session that redirects to success
       console.log('Creating test mode payment session');
+      
+      // Properly construct URL with query parameters
+      const url = new URL(successUrl);
+      url.searchParams.set('test_payment', 'true');
+      url.searchParams.set('session_id', `test_${Date.now()}`);
+      
       return {
-        url: `${successUrl}?test_payment=true&session_id=test_${Date.now()}`,
+        url: url.toString(),
         sessionId: `test_session_${Date.now()}`,
         status: 'pending'
       };
