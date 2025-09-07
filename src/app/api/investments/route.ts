@@ -109,19 +109,35 @@ export async function POST(request: NextRequest) {
     // Create payment with Dodo Payments
     const paymentResult = await createInvestmentPayment(investment, successUrl, cancelUrl);
 
+    // Check if company record exists, create if it doesn't
+    let company = await withRetry(() => 
+      prisma.company.findUnique({
+        where: { clerkUserId: userId }
+      })
+    );
+
+    if (!company) {
+      // Create a basic company record for the user
+      company = await withRetry(() => 
+        prisma.company.create({
+          data: {
+            clerkUserId: userId,
+            name: investorName || "Individual Investor",
+            email: investorEmail,
+            status: "active"
+          }
+        })
+      );
+    }
+
     // Store investment intent in database (pending status)
     const investmentRecord = await withRetry(() => 
       prisma.investment.create({
         data: {
           projectId: projectId,
-          companyId: userId, // Using Clerk user ID as company ID
+          companyId: company.id, // Use the company ID instead of user ID
           creditsBought: creditAmount,
           totalPrice: totalAmount,
-          // Note: paymentStatus field needs to be added to schema
-          // paymentStatus: "pending",
-          // paymentSessionId: paymentResult.sessionId,
-          // investorEmail: investorEmail,
-          // investorName: investorName
         }
       })
     );
@@ -141,6 +157,8 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error("Investment creation error:", error);
+    console.error("Error details:", error.message);
+    console.error("Error stack:", error.stack);
     
     if (error.code === 'P1001' || error.message?.includes("Can't reach database server")) {
       return NextResponse.json({ 
@@ -148,10 +166,26 @@ export async function POST(request: NextRequest) {
         error: "Database temporarily unavailable. Please try again."
       }, { status: 503 });
     }
+
+    // Handle Prisma validation errors
+    if (error.code === 'P2002') {
+      return NextResponse.json({ 
+        success: false, 
+        error: "Investment record already exists."
+      }, { status: 409 });
+    }
+
+    // Handle foreign key constraint errors
+    if (error.code === 'P2003') {
+      return NextResponse.json({ 
+        success: false, 
+        error: "Invalid project or user reference."
+      }, { status: 400 });
+    }
     
     return NextResponse.json({ 
       success: false, 
-      error: "Failed to create investment. Please try again."
+      error: `Failed to create investment: ${error.message}`
     }, { status: 500 });
     
   } finally {

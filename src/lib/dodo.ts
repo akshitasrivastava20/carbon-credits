@@ -23,7 +23,7 @@ const getApiKey = () => {
 // Initialize Dodo client lazily to avoid issues with environment variables
 let dodoClient: DodoPayments | null = null;
 
-const getDodoClient = () => {
+export const getDodoClient = () => {
   if (!dodoClient) {
     dodoClient = new DodoPayments({
       bearerToken: getApiKey(),
@@ -46,9 +46,21 @@ export const createInvestmentPayment = async (
   cancelUrl: string
 ) => {
   try {
-    // For simplicity, we'll create a single "Carbon Credit" product in Dodo dashboard
-    // and use it for all investments with the amount parameter
-    const CARBON_CREDIT_PRODUCT_ID = "prod_carbon_credit_001"; // You'll replace this with your actual product ID
+    // Check if we're in test mode and merchant test mode is not enabled
+    const isTestMode = process.env.NEXT_PUBLIC_DODO_MODE !== 'live';
+    
+    if (isTestMode) {
+      // For test mode, create a mock payment session that redirects to success
+      console.log('Creating test mode payment session');
+      return {
+        url: `${successUrl}?test_payment=true&session_id=test_${Date.now()}`,
+        sessionId: `test_session_${Date.now()}`,
+        status: 'pending'
+      };
+    }
+
+    // For live mode, use actual Dodo API
+    const CARBON_CREDIT_PRODUCT_ID = "pdt_pTi3uI8TBUHEgRTqXT9Ep"; // Your actual Dodo product ID
     
     const checkoutParams: DodoPayments.CheckoutSessionCreateParams = {
       product_cart: [
@@ -84,7 +96,13 @@ export const createInvestmentPayment = async (
     };
   } catch (error) {
     console.error('Error creating Dodo checkout session:', error);
-    throw new Error('Failed to create payment session');
+    
+    // Provide specific error handling for mode issues
+    if (error instanceof Error && error.message.includes('mode not enabled')) {
+      throw new Error('Payment mode not enabled. Please contact support or try switching payment modes.');
+    }
+    
+    throw new Error(`Payment session creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 

@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "prisma generate && next build --turbopack",
     "start": "next start",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test-dodo": "node scripts/setup-dodo-products.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.31.6",
@@ -15,6 +16,7 @@
     "clsx": "^2.1.1",
     "cobe": "^0.6.4",
     "dodopayments": "^1.52.5",
+    "dotenv": "^17.2.2",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.542.0",
     "mini-svg-data-uri": "^1.4.4",

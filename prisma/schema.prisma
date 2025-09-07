@@ -26,6 +26,7 @@ model Company {
   status      String   @default("pending")
   usages      Usage[]
   investments Investment[]
+  transactions Transaction[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -78,10 +79,149 @@ model Project {
   additionalBenefits String? // Additional environmental/social benefits
   riskFactors      String?  // Project risk assessment
   
+  // Project holder/owner information
+  holderId         String?  // ID of the project holder (Company or Individual)
+  holderType       HolderType @default(INDIVIDUAL) // Type of project holder
+  paymentEmail     String?  // Email for payment notifications
+  bankAccount      String?  // Bank account details (encrypted)
+  payoutSchedule   PayoutSchedule @default(IMMEDIATE) // When payments are released
+  platformFee      Float    @default(2.5) // Platform fee percentage (default 2.5%)
+  
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   investments      Investment[]
+  payouts          Payout[]
+  products         Product[] // Dodo products for this project
+}
+
+enum HolderType {
+  INDIVIDUAL
+  COMPANY
+  ORGANIZATION
+  COOPERATIVE
+}
+
+enum PayoutSchedule {
+  IMMEDIATE    // Pay immediately after investment
+  WEEKLY       // Weekly batch payouts
+  MONTHLY      // Monthly batch payouts
+  MILESTONE    // Pay on project milestones
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  projectId        String
+  dodoProductId    String   @unique // Dodo Payments product ID
+  name             String
+  description      String?
+  price            Float    // Price per credit
+  currency         String   @default("USD")
+  isActive         Boolean  @default(true)
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  transactions     Transaction[]
+}
+
+model Transaction {
+  id               String   @id @default(cuid())
+  investmentId     String   @unique
+  productId        String
+  companyId        String?  // Investor company
+  
+  // Dodo Payments integration
+  dodoSessionId    String?  // Dodo checkout session ID
+  dodoPaymentId    String?  // Dodo payment intent ID
+  
+  // Transaction details
+  amount           Float    // Total transaction amount
+  platformFee      Float    // Platform fee amount
+  payoutAmount     Float    // Amount to be paid to project holder
+  creditsPurchased Int      // Number of credits purchased
+  pricePerCredit   Float    // Price per credit at time of purchase
+  
+  // Status tracking
+  status           TransactionStatus @default(PENDING)
+  paymentStatus    PaymentStatus @default(PENDING)
+  payoutStatus     PayoutStatus @default(PENDING)
+  
+  // Timestamps
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  paidAt           DateTime?
+  
+  investment       Investment @relation(fields: [investmentId], references: [id])
+  product          Product    @relation(fields: [productId], references: [id])
+  company          Company?   @relation(fields: [companyId], references: [id])
+  payouts          Payout[]
+}
+
+enum TransactionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum PayoutStatus {
+  PENDING
+  SCHEDULED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model Payout {
+  id               String   @id @default(cuid())
+  projectId        String
+  transactionId    String?  // Optional - can be batch payout
+  
+  // Payout details
+  amount           Float    // Amount to be paid out
+  currency         String   @default("USD")
+  payoutMethod     PayoutMethod @default(BANK_TRANSFER)
+  
+  // Recipient details
+  recipientEmail   String
+  recipientName    String?
+  bankAccount      String?  // Encrypted bank details
+  
+  // Status and tracking
+  status           PayoutStatus @default(PENDING)
+  payoutDate       DateTime?
+  scheduledDate    DateTime @default(now())
+  
+  // External service tracking
+  providerPayoutId String?  // External payout service ID
+  providerResponse Json?    // Provider response data
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  project          Project     @relation(fields: [projectId], references: [id])
+  transaction      Transaction? @relation(fields: [transactionId], references: [id])
+}
+
+enum PayoutMethod {
+  BANK_TRANSFER
+  PAYPAL
+  STRIPE_EXPRESS
+  WIRE_TRANSFER
+  CHECK
 }
 
 model Investment {
@@ -92,8 +232,9 @@ model Investment {
   totalPrice  Float
   createdAt   DateTime @default(now())
 
-  company Company @relation(fields: [companyId], references: [id])
-  project Project @relation(fields: [projectId], references: [id])
+  company     Company @relation(fields: [companyId], references: [id])
+  project     Project @relation(fields: [projectId], references: [id])
+  transaction Transaction?
 }
 
 

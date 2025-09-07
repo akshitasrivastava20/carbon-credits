@@ -31,42 +31,14 @@ function InvestmentSuccessContent() {
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
-    const isTestPayment = searchParams.get('test_payment') === 'true';
     
     if (sessionId) {
-      if (isTestPayment) {
-        handleTestPayment(sessionId);
-      } else {
-        fetchInvestmentDetails(sessionId);
-      }
+      fetchInvestmentDetails(sessionId);
     } else {
       setError("Invalid payment session");
       setLoading(false);
     }
   }, [searchParams]);
-
-  const handleTestPayment = (sessionId: string) => {
-    // Simulate a successful test payment
-    setInvestmentDetails({
-      id: sessionId,
-      creditsBought: 10,
-      totalPrice: 250.00,
-      project: {
-        title: "Test Carbon Credit Investment",
-        projectDeveloper: "Test Developer",
-        pricePerCredit: 25.00
-      },
-      transaction: {
-        id: sessionId,
-        amount: 250.00,
-        platformFee: 12.50,
-        payoutAmount: 237.50,
-        status: "completed",
-        paidAt: new Date().toISOString()
-      }
-    });
-    setLoading(false);
-  };
 
   const fetchInvestmentDetails = async (sessionId: string) => {
     try {
@@ -143,24 +115,6 @@ function InvestmentSuccessContent() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Test Mode Banner */}
-        {searchParams.get('test_payment') === 'true' && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-yellow-700">
-                  <strong>Test Mode:</strong> This is a simulated payment for development purposes. No real money was processed.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-        
         {/* Success Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
