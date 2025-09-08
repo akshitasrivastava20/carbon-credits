@@ -148,66 +148,81 @@ export default function RegisterPage() {
           </div>
         ) : (isRegistered && !isEditMode) ? (
           // Company is already registered - show dashboard options
-          <div className="text-center">
-            <div className="mb-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center space-y-6">
+            <div className="mb-8">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Already Registered!</h1>
-              <p className="text-gray-600 mb-2">Welcome back, <span className="font-semibold text-green-600">{companyData?.name}</span></p>
-              <p className="text-sm text-gray-500">Your company is already registered with us.</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Welcome Back!</h1>
+              <p className="text-gray-600 mb-2 text-lg">
+                <span className="font-semibold text-green-600">{companyData?.name}</span>
+              </p>
+              <p className="text-sm text-gray-500">Your company is registered and ready to go.</p>
             </div>
 
+            {/* Action Buttons */}
             <div className="space-y-4">
-              <Link href="/project">
-                <button className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors shadow-lg">
+              <Link href="/projects" className="block w-full">
+                <button className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                   🌱 Explore Projects
                 </button>
               </Link>
               
-              <button 
-                onClick={() => setIsEditMode(true)}
-                className="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-lg font-medium transition-colors shadow-lg"
-              >
-                ✏️ Edit Profile
-              </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button 
+                  onClick={() => setIsEditMode(true)}
+                  className="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  ✏️ Edit Profile
+                </button>
+                
+                <button 
+                  onClick={handleCalculateCredits}
+                  disabled={isCalculatingCredits}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:bg-blue-400 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                >
+                  {isCalculatingCredits ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Calculating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 002 2z" />
+                      </svg>
+                      Calculate Credits
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
               
-              <button 
-                onClick={handleCalculateCredits}
-                disabled={isCalculatingCredits}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-colors shadow-lg disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {isCalculatingCredits ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Calculating Carbon Credits...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    Calculate Carbon Credits
-                  </>
-                )}
-              </button>
-              
-              <div className="pt-4 border-t border-gray-200">
-                <p className="text-xs text-black mb-2">Company Details:</p>
-                <div className="text-sm text-black text-left bg-white p-3 rounded-lg">
-                  <p><span className="font-medium">Industry:</span> {companyData?.industry}</p>
-                  <p><span className="font-medium">Email:</span> {companyData?.email}</p>
-                  <p><span className="font-medium">Status:</span> 
-                    <span className={`ml-1 px-2 py-1 rounded-full text-xs ${
+            {/* Company Details Card */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">Company Details</h3>
+              <div className="bg-gradient-to-r from-gray-50 to-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 mb-1">Industry</p>
+                    <p className="text-gray-800 font-semibold">{companyData?.industry || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 mb-1">Email</p>
+                    <p className="text-gray-800 font-semibold break-all">{companyData?.email}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <p className="text-sm font-medium text-gray-500 mb-2">Status</p>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                       companyData?.status === 'approved' ? 'bg-green-100 text-green-800' :
                       companyData?.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
-                      {companyData?.status}
+                      {companyData?.status || 'active'}
                     </span>
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
