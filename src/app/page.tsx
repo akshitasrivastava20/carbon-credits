@@ -1,4 +1,6 @@
 
+"use client";
+
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { Home as HomeIcon, Info, CreditCard, Building2, Leaf } from 'lucide-react'
