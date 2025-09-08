@@ -5,6 +5,9 @@ import Link from 'next/link'
 import Globe from '@/components/ui/globe'
 import { BlurFade } from '@/components/ui/blur-fade';
 import { ThreeDCardDemo } from '@/components/cardComponent';
+import TypewriterEffectSection from '@/components/TypewriterEffectSection';
+import { Button } from '@/components/ui/moving-border';
+import { Footer } from '@/components/ui/large-name-footer';
 
 export default function Home() {
   return (
@@ -70,12 +73,28 @@ Track. Offset. Invest.<br/>
         <div className="flex justify-center py-10">
           <Globe />
         </div>
+          
+        {/* Typewriter Effect Section */}
+        <TypewriterEffectSection />
         
-       
+        {/* Moving Border Button Section */}
+        <div className="flex justify-center py-10">
+          <Link href="/credits">
+            <Button
+              borderRadius="1.75rem"
+              className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+            >
+              your credits
+            </Button>
+          </Link>
+        </div>
+        
         
         {/* 3D Card Demo Section */}
         <ThreeDCardDemo />
         
+        {/* Footer Section */}
+        <Footer />
        
       </div>
     </div>
