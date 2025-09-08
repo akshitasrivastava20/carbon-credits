@@ -34,11 +34,8 @@ function InvestmentSuccessContent() {
     const isTestPayment = searchParams.get('test_payment') === 'true';
     
     if (sessionId) {
-      if (isTestPayment) {
-        handleTestPayment(sessionId);
-      } else {
-        fetchInvestmentDetails(sessionId);
-      }
+      // For both test and live payments, try to fetch real data from database first
+      fetchInvestmentDetails(sessionId);
     } else {
       setError("Invalid payment session");
       setLoading(false);
@@ -83,9 +80,22 @@ function InvestmentSuccessContent() {
       if (result.success) {
         setInvestmentDetails(result.data);
       } else {
+        // If API call fails but this is a test payment, show mock data as fallback
+        const isTestPayment = searchParams.get('test_payment') === 'true';
+        if (isTestPayment) {
+          handleTestPayment(sessionId);
+          return;
+        }
         setError(result.error || "Failed to fetch investment details");
       }
     } catch (err) {
+      // If API call fails but this is a test payment, show mock data as fallback
+      const isTestPayment = searchParams.get('test_payment') === 'true';
+      if (isTestPayment) {
+        console.log("API call failed for test payment, using mock data");
+        handleTestPayment(sessionId);
+        return;
+      }
       setError("Failed to load investment information");
       console.error("Investment details fetch error:", err);
     } finally {
@@ -161,7 +171,7 @@ function InvestmentSuccessContent() {
               </div>
               <div className="ml-3">
                 <p className="text-sm text-yellow-700">
-                  <strong>Test Mode:</strong> This is a simulated payment for development purposes. No real money was processed.
+                  <strong>Test Mode:</strong> This is a simulated payment for development purposes. No real money was processed, but your carbon credits have been recorded in your portfolio.
                 </p>
               </div>
             </div>

@@ -234,9 +234,30 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get company record first
+    const company = await withRetry(() => 
+      prisma.company.findUnique({
+        where: { clerkUserId: userId }
+      })
+    );
+
+    if (!company) {
+      return NextResponse.json({
+        success: true,
+        investments: [],
+        summary: {
+          totalInvestments: 0,
+          totalInvested: 0,
+          totalCredits: 0,
+          successfulInvestments: 0,
+          pendingInvestments: 0
+        }
+      });
+    }
+
     const investments = await withRetry(() => 
       prisma.investment.findMany({
-        where: { companyId: userId },
+        where: { companyId: company.id }, // Use company.id instead of userId
         include: {
           project: {
             select: {
