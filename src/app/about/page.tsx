@@ -1,33 +1,9 @@
-"use client";
 import Link from "next/link";
-import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignInButton, SignedIn, SignedOut } from '@clerk/nextjs';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      {/* Navigation */}
-      <nav className="flex justify-between items-center p-6 bg-white/80 backdrop-blur-md border-b border-gray-200/30 sticky top-0 z-50">
-        <Link href="/" className="text-2xl font-bold text-green-800">
-          Carbon Credits
-        </Link>
-        <div>
-          <SignedOut>
-            <SignInButton>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-lg">
-                Sign In
-              </button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <div className="flex items-center gap-4">
-              <Link href="/register" className="text-gray-700 hover:text-green-600 transition-colors">
-                Dashboard
-              </Link>
-              <UserButton />
-            </div>
-          </SignedIn>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 pt-20">
 
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
