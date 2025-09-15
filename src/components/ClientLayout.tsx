@@ -34,7 +34,7 @@ export default function ClientLayout({
       {/* Auth Section - Available on all pages */}
       <div className="fixed top-6 right-6 z-50">
         <SignedOut>
-          <SignInButton>
+          <SignInButton fallbackRedirectUrl="/register">
             <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-lg">
               Sign In
             </button>

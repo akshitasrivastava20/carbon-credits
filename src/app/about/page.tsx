@@ -523,7 +523,7 @@ export default function AboutPage() {
                 
                 <div className="space-y-4">
                   <SignedOut>
-                    <SignInButton>
+                    <SignInButton fallbackRedirectUrl="/register">
                       <button className="bg-white text-green-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg">
                         Start Your Registration
                       </button>
