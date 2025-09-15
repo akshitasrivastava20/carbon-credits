@@ -133,8 +133,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20">
-      <div className="max-w-lg w-full p-8 shadow-2xl rounded-2xl bg-white bg-opacity-95 backdrop-blur-sm border border-white border-opacity-30 relative z-30">
+    <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20" style={{ pointerEvents: 'auto' }}>
+      <div className="max-w-lg w-full p-8 shadow-2xl rounded-2xl bg-white bg-opacity-95 backdrop-blur-sm border border-white border-opacity-30 relative z-30" style={{ pointerEvents: 'auto' }}>
         
         {!user ? (
           <div className="text-center py-8">
@@ -244,15 +244,16 @@ export default function RegisterPage() {
                 </button>
               )}
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 relative z-40">
             <div>
               <input 
                 name="name" 
                 placeholder="Company Name" 
                 value={form.name} 
                 onChange={handleChange} 
-                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 cursor-text relative z-50" 
                 required 
+                style={{ pointerEvents: 'auto' }}
               />
             </div>
             
@@ -262,7 +263,8 @@ export default function RegisterPage() {
                 placeholder="Industry Type" 
                 value={form.industry} 
                 onChange={handleChange} 
-                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 cursor-text relative z-50" 
+                style={{ pointerEvents: 'auto' }}
               />
             </div>
             
@@ -276,8 +278,9 @@ export default function RegisterPage() {
                 placeholder="Email Address" 
                 value={form.email} 
                 onChange={handleChange}
-                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 cursor-text relative z-50" 
                 required 
+                style={{ pointerEvents: 'auto' }}
               />
               <p className="text-xs text-gray-500 mt-1">
                 You can use a different email address for your company registration if needed.
