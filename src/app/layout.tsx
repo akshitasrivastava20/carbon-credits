@@ -24,8 +24,8 @@ export default function RootLayout({
         variables: {},
         elements: {}
       }}
-      afterSignInUrl="/register"
-      afterSignUpUrl="/register"
+      signInForceRedirectUrl="/register"
+      signUpForceRedirectUrl="/register"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
     >
