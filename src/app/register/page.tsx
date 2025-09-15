@@ -275,13 +275,12 @@ export default function RegisterPage() {
                 name="email" 
                 placeholder="Email Address" 
                 value={form.email} 
-                readOnly
-                className="w-full p-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed" 
+                onChange={handleChange}
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
                 required 
               />
               <p className="text-xs text-gray-500 mt-1">
-                This email matches your account email and cannot be changed here. 
-                To use a different email, please update it in your account settings first.
+                You can use a different email address for your company registration if needed.
               </p>
             </div>
             
