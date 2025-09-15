@@ -7,7 +7,7 @@ import { ThreeDCardDemo } from '@/components/cardComponent';
 import TypewriterEffectSection from '@/components/TypewriterEffectSection';
 import { Button } from '@/components/ui/moving-border';
 import { Footer } from '@/components/ui/large-name-footer';
-import { SignInButton, SignedIn, SignedOut } from '@clerk/nextjs';
+import { SignInButton, SignUpButton, SignedIn, SignedOut } from '@clerk/nextjs';
 
 export default function Home() {
   return (
@@ -29,11 +29,11 @@ Track. Offset. Invest.<br/>
           
           <BlurFade delay={0.5} inView>
             <SignedOut>
-              <SignInButton fallbackRedirectUrl="/register">
+              <SignUpButton fallbackRedirectUrl="/register">
                 <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg">
                   Get Started Today
                 </button>
-              </SignInButton>
+              </SignUpButton>
             </SignedOut>
 
             <SignedIn>

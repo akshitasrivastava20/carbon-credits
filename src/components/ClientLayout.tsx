@@ -1,6 +1,6 @@
 "use client";
 
-import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { Home as HomeIcon, Info, CreditCard, Building2, Leaf } from 'lucide-react';
 import { NavBar } from '@/components/ui/tubelight-navbar';
 
@@ -34,11 +34,18 @@ export default function ClientLayout({
       {/* Auth Section - Available on all pages */}
       <div className="fixed top-6 right-6 z-50">
         <SignedOut>
-          <SignInButton fallbackRedirectUrl="/register">
-            <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-lg">
-              Sign In
-            </button>
-          </SignInButton>
+          <div className="flex items-center gap-3">
+            <SignInButton fallbackRedirectUrl="/register">
+              <button className="bg-white hover:bg-gray-50 text-green-600 border border-green-600 px-4 py-2 rounded-lg font-medium transition-colors shadow-lg">
+                Sign In
+              </button>
+            </SignInButton>
+            <SignUpButton fallbackRedirectUrl="/register">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg">
+                Sign Up
+              </button>
+            </SignUpButton>
+          </div>
         </SignedOut>
         <SignedIn>
           <div className="flex items-center gap-4">
