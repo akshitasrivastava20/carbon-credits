@@ -17,7 +17,6 @@ export default function Page() {
       <div className="relative z-60" style={{pointerEvents: 'auto'}}>
         <SignUp 
           forceRedirectUrl="/register"
-          fallbackRedirectUrl="/register"
         />
       </div>
     </div>

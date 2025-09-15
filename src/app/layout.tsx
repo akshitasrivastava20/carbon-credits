@@ -18,16 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: undefined,
-        variables: {},
-        elements: {}
-      }}
+        <ClerkProvider
       signInForceRedirectUrl="/register"
       signUpForceRedirectUrl="/register"
-      signInFallbackRedirectUrl="/register"
-      signUpFallbackRedirectUrl="/register"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
     >
