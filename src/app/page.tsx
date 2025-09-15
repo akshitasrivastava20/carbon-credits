@@ -29,7 +29,7 @@ Track. Offset. Invest.<br/>
           
           <BlurFade delay={0.5} inView>
             <SignedOut>
-              <SignUpButton fallbackRedirectUrl="/register">
+              <SignUpButton forceRedirectUrl="/register">
                 <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg">
                   Get Started Today
                 </button>

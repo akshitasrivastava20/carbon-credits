@@ -35,12 +35,12 @@ export default function ClientLayout({
       <div className="fixed top-6 right-6 z-50">
         <SignedOut>
           <div className="flex items-center gap-3">
-            <SignInButton fallbackRedirectUrl="/register">
+            <SignInButton forceRedirectUrl="/register">
               <button className="bg-white hover:bg-gray-50 text-green-600 border border-green-600 px-4 py-2 rounded-lg font-medium transition-colors shadow-lg">
                 Sign In
               </button>
             </SignInButton>
-            <SignUpButton fallbackRedirectUrl="/register">
+            <SignUpButton forceRedirectUrl="/register">
               <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg">
                 Sign Up
               </button>
