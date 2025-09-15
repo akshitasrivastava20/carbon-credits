@@ -18,7 +18,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: undefined,
+        variables: {},
+        elements: {}
+      }}
+      afterSignInUrl="/register"
+      afterSignUpUrl="/register"
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+    >
       <html lang="en">
         <body className={inter.className}>
           <ClientLayout>
