@@ -26,6 +26,8 @@ export default function RootLayout({
       }}
       signInForceRedirectUrl="/register"
       signUpForceRedirectUrl="/register"
+      signInFallbackRedirectUrl="/register"
+      signUpFallbackRedirectUrl="/register"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
     >
