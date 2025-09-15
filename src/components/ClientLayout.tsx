@@ -21,7 +21,7 @@ export default function ClientLayout({
     <div className="relative min-h-screen">
       {/* Background Image Layer */}
       <div 
-        className="fixed inset-0 bg-repeat z-0"
+        className="fixed inset-0 bg-repeat z-0 pointer-events-none"
         style={{ 
           backgroundImage: "url('/chatgpt-background.png')",
           backgroundSize: '120px 120px',
@@ -55,7 +55,7 @@ export default function ClientLayout({
       </div>
       
       {/* Content Layer */}
-      <div className="relative z-10">
+      <div className="relative z-10 pointer-events-auto">
         <main>
           {children}
         </main>

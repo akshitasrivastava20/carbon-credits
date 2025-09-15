@@ -133,8 +133,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen pt-20 px-6 flex items-center justify-center">
-      <div className="max-w-lg w-full p-8 shadow-2xl rounded-2xl bg-white bg-opacity-95 backdrop-blur-sm border border-white border-opacity-30">
+    <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20">
+      <div className="max-w-lg w-full p-8 shadow-2xl rounded-2xl bg-white bg-opacity-95 backdrop-blur-sm border border-white border-opacity-30 relative z-30">
         
         {!user ? (
           <div className="text-center py-8">
