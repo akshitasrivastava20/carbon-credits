@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 
 export default function Page() {
   useEffect(() => {
-    // Aggressive cleanup of ALL redirect parameters
+    // Aggressive cleanup - remove ALL URL parameters
     if (typeof window !== 'undefined') {
       const cleanUrl = window.location.origin + window.location.pathname
       window.history.replaceState({}, '', cleanUrl)
