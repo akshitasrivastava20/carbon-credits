@@ -1,0 +1,32 @@
+# SANITIZED Environment Variables for Clerk Support
+# (All sensitive values have been redacted with [REDACTED])
+
+# Clerk Configuration - ONLY these variables are relevant for the redirectUrl deprecation issue
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_[REDACTED]
+CLERK_SECRET_KEY=sk_live_[REDACTED]
+
+# Clerk URL Configuration
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/register
+NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/register
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/register
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/register
+
+# Other services (not related to Clerk issue)
+DATABASE_URL="postgresql://[REDACTED]"
+PINATA_API_KEY=[REDACTED]
+PINATA_API_SECRET=[REDACTED]
+PINATA_JWT=[REDACTED]
+NEXT_PUBLIC_GATEWAY_URL=https://white-elderly-primate-626.mypinata.cloud
+DODO_PAYMENTS_API_KEY=[REDACTED]
+DODO_WEBHOOK_SECRET=[REDACTED]
+NEXT_PUBLIC_DODO_MODE=test
+API_KEY=[REDACTED]
+CRON_SECRET_TOKEN=[REDACTED]
+
+# NOTE FOR CLERK SUPPORT:
+# - Using production keys (pk_live_* and sk_live_*)
+# - All Clerk-related environment variables are configured with new prop names
+# - The issue persists despite having both FORCE and FALLBACK redirect URLs configured
+# - The deprecation warning appears to be triggered internally by Clerk, not by our configuration

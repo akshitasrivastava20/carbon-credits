@@ -31,10 +31,10 @@ export default function ClientLayout({
       {/* TubeLight Navbar - Available on all pages */}
       <NavBar items={navItems} />
       
-      {/* Auth Section - Available on all pages */}
+      {/* Auth Section */}
       <div className="fixed top-6 right-6 z-50">
-        <SignedOut>
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
+          <SignedOut>
             <SignInButton>
               <button className="bg-white hover:bg-gray-50 text-green-600 border border-green-600 px-4 py-2 rounded-lg font-medium transition-colors shadow-lg">
                 Sign In
@@ -45,13 +45,17 @@ export default function ClientLayout({
                 Sign Up
               </button>
             </SignUpButton>
-          </div>
-        </SignedOut>
-        <SignedIn>
-          <div className="flex items-center gap-4">
-            <UserButton />
-          </div>
-        </SignedIn>
+          </SignedOut>
+          <SignedIn>
+            <UserButton 
+              appearance={{
+                elements: {
+                  avatarBox: "w-10 h-10"
+                }
+              }}
+            />
+          </SignedIn>
+        </div>
       </div>
       
       {/* Content Layer */}
