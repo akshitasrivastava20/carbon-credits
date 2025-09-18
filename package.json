@@ -39,8 +39,5 @@
     "tsx": "^4.20.5",
     "tw-animate-css": "^1.3.7",
     "typescript": "^5"
-  },
-  "prisma": {
-    "seed": "npx tsx prisma/seed.ts"
   }
 }
