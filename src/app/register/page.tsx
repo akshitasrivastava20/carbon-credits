@@ -136,48 +136,219 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20">
-      {/* Ultra Simple Test - Just basic inputs */}
+      {/* Working Registration Form */}
       <div 
         style={{
           position: 'fixed',
-          top: '100px',
-          right: '100px',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           zIndex: 99999,
           isolation: 'isolate'
         }}
         dangerouslySetInnerHTML={{
           __html: `
-            <div style="background: red; padding: 20px; border-radius: 8px;">
-              <h3 style="color: white; margin-bottom: 10px;">TEST FORM</h3>
+            <div style="
+              background: white; 
+              padding: 30px; 
+              border-radius: 12px; 
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+              max-width: 450px;
+              width: 90vw;
+              max-height: 85vh;
+              overflow-y: auto;
+            ">
+              <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px; text-align: center; color: #1f2937;">
+                ${isEditMode ? "Edit Profile" : "Company Registration"}
+              </h2>
+              
               <input 
-                placeholder="Type here to test" 
+                id="companyName"
+                placeholder="Company Name *" 
                 style="
-                  width: 200px; 
-                  padding: 8px; 
-                  border: none; 
-                  border-radius: 4px; 
+                  width: 100%; 
+                  padding: 12px; 
+                  border: 2px solid #d1d5db; 
+                  border-radius: 8px; 
                   font-size: 16px;
-                  margin-bottom: 10px;
+                  margin-bottom: 15px;
                   display: block;
+                  box-sizing: border-box;
+                  background: white;
+                  color: #1f2937;
                 "
-                oninput="console.log('Input working:', this.value);"
-                onkeydown="console.log('Key pressed:', event.key);"
-                onfocus="console.log('Input focused'); this.style.border='2px solid blue';"
-                onblur="console.log('Input blurred'); this.style.border='none';"
+                onfocus="this.style.border='2px solid #059669';"
+                onblur="this.style.border='2px solid #d1d5db';"
+                oninput="
+                  window.registrationData = window.registrationData || {};
+                  window.registrationData.name = this.value;
+                  console.log('Company name:', this.value);
+                "
               />
-              <button 
-                onclick="alert('Button clicked!');" 
+              
+              <input 
+                id="industry"
+                placeholder="Industry Type" 
                 style="
-                  background: blue; 
+                  width: 100%; 
+                  padding: 12px; 
+                  border: 2px solid #d1d5db; 
+                  border-radius: 8px; 
+                  font-size: 16px;
+                  margin-bottom: 15px;
+                  display: block;
+                  box-sizing: border-box;
+                  background: white;
+                  color: #1f2937;
+                "
+                onfocus="this.style.border='2px solid #059669';"
+                onblur="this.style.border='2px solid #d1d5db';"
+                oninput="
+                  window.registrationData = window.registrationData || {};
+                  window.registrationData.industry = this.value;
+                "
+              />
+              
+              <input 
+                id="email"
+                type="email"
+                placeholder="Email Address *" 
+                value="${form.email.replace(/"/g, '&quot;')}"
+                style="
+                  width: 100%; 
+                  padding: 12px; 
+                  border: 2px solid #d1d5db; 
+                  border-radius: 8px; 
+                  font-size: 16px;
+                  margin-bottom: 15px;
+                  display: block;
+                  box-sizing: border-box;
+                  background: white;
+                  color: #1f2937;
+                "
+                onfocus="this.style.border='2px solid #059669';"
+                onblur="this.style.border='2px solid #d1d5db';"
+                oninput="
+                  window.registrationData = window.registrationData || {};
+                  window.registrationData.email = this.value;
+                "
+              />
+              
+              <input 
+                id="address"
+                placeholder="Company Address (Optional)" 
+                style="
+                  width: 100%; 
+                  padding: 12px; 
+                  border: 2px solid #d1d5db; 
+                  border-radius: 8px; 
+                  font-size: 16px;
+                  margin-bottom: 15px;
+                  display: block;
+                  box-sizing: border-box;
+                  background: white;
+                  color: #1f2937;
+                "
+                onfocus="this.style.border='2px solid #059669';"
+                onblur="this.style.border='2px solid #d1d5db';"
+                oninput="
+                  window.registrationData = window.registrationData || {};
+                  window.registrationData.address = this.value;
+                "
+              />
+              
+              <input 
+                id="taxId"
+                placeholder="Tax ID/PAN/GST (Optional)" 
+                style="
+                  width: 100%; 
+                  padding: 12px; 
+                  border: 2px solid #d1d5db; 
+                  border-radius: 8px; 
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  display: block;
+                  box-sizing: border-box;
+                  background: white;
+                  color: #1f2937;
+                "
+                onfocus="this.style.border='2px solid #059669';"
+                onblur="this.style.border='2px solid #d1d5db';"
+                oninput="
+                  window.registrationData = window.registrationData || {};
+                  window.registrationData.taxId = this.value;
+                "
+              />
+              
+              <button 
+                onclick="
+                  window.registrationData = window.registrationData || {};
+                  
+                  // Get current values from inputs
+                  window.registrationData.name = document.getElementById('companyName').value;
+                  window.registrationData.industry = document.getElementById('industry').value;
+                  window.registrationData.email = document.getElementById('email').value;
+                  window.registrationData.address = document.getElementById('address').value;
+                  window.registrationData.taxId = document.getElementById('taxId').value;
+                  
+                  console.log('Registration data:', window.registrationData);
+                  
+                  if (!window.registrationData.name || !window.registrationData.email) {
+                    alert('Please fill in required fields: Company Name and Email');
+                    return;
+                  }
+                  
+                  // Basic email validation
+                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailRegex.test(window.registrationData.email)) {
+                    alert('Please enter a valid email address');
+                    return;
+                  }
+                  
+                  alert('Registration data collected! Check console for details.');
+                  console.log('Ready to submit:', window.registrationData);
+                  
+                  // Here you can add actual form submission logic
+                  // For now, just showing the data is captured correctly
+                " 
+                style="
+                  width: 100%; 
+                  background-color: #059669; 
                   color: white; 
                   border: none; 
-                  padding: 8px 16px; 
-                  border-radius: 4px; 
+                  padding: 14px; 
+                  border-radius: 8px; 
+                  font-size: 18px; 
+                  font-weight: 600; 
                   cursor: pointer;
+                  transition: background-color 0.2s ease;
                 "
+                onmouseover="this.style.backgroundColor='#047857';"
+                onmouseout="this.style.backgroundColor='#059669';"
               >
-                Test Click
+                ${isEditMode ? "Update Profile" : "Register Company"}
               </button>
+              
+              ${isEditMode ? `
+                <button 
+                  onclick="alert('Edit cancelled - you can close this form');" 
+                  style="
+                    width: 100%; 
+                    background-color: #6b7280; 
+                    color: white; 
+                    border: none; 
+                    padding: 10px; 
+                    border-radius: 8px; 
+                    font-size: 14px; 
+                    cursor: pointer;
+                    margin-top: 10px;
+                  "
+                  onmouseover="this.style.backgroundColor='#4b5563';"
+                  onmouseout="this.style.backgroundColor='#6b7280';"
+                >
+                  Cancel
+                </button>
+              ` : ''}
             </div>
           `
         }}
