@@ -40,12 +40,13 @@ Track. Offset. Invest.<br/>
             </SignedOut>
 
             <SignedIn>
-              <Link 
-                href="/register"
-                className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg cursor-pointer inline-block touch-manipulation"
-                style={{ pointerEvents: 'auto' }}
-              >
-                Dashboard
+              <Link href="/register">
+                <button 
+                  className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg cursor-pointer touch-manipulation"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  Dashboard
+                </button>
               </Link>
             </SignedIn>
           </BlurFade>
@@ -61,17 +62,13 @@ Track. Offset. Invest.<br/>
         
         {/* Moving Border Button Section */}
         <div className="flex justify-center py-10">
-          <Link 
-            href="/credits"
-            className="cursor-pointer touch-manipulation"
-            style={{ pointerEvents: 'auto' }}
-          >
-            <Button
-              borderRadius="1.75rem"
-              className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800 cursor-pointer"
+          <Link href="/credits">
+            <button
+              className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800 px-8 py-4 rounded-3xl text-lg font-semibold transition-colors shadow-lg cursor-pointer touch-manipulation border-2"
+              style={{ pointerEvents: 'auto' }}
             >
               your credits
-            </Button>
+            </button>
           </Link>
         </div>
         
