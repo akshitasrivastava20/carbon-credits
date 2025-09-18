@@ -116,7 +116,7 @@ export default function RegisterPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading user information...</p>
@@ -127,7 +127,7 @@ export default function RegisterPage() {
 
   if (isCheckingRegistration) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Checking registration status...</p>
@@ -138,7 +138,7 @@ export default function RegisterPage() {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-6" 
+      className="min-h-screen flex items-center justify-center p-6" 
       style={{ 
         position: 'relative', 
         zIndex: 99999,

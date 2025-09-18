@@ -3,7 +3,7 @@ import { SignInButton, SignedIn, SignedOut } from '@clerk/nextjs';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 pt-20">
+    <div className="min-h-screen pt-20">
 
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
