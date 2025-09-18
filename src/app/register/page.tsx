@@ -282,6 +282,12 @@ export default function RegisterPage() {
               
               <button 
                 onclick="
+                  // Disable button and show loading
+                  this.disabled = true;
+                  this.innerHTML = 'Registering...';
+                  this.style.opacity = '0.6';
+                  this.style.cursor = 'not-allowed';
+                  
                   window.registrationData = window.registrationData || {};
                   
                   // Get current values from inputs
@@ -295,6 +301,11 @@ export default function RegisterPage() {
                   
                   if (!window.registrationData.name || !window.registrationData.email) {
                     alert('Please fill in required fields: Company Name and Email');
+                    // Re-enable button
+                    this.disabled = false;
+                    this.innerHTML = '${isEditMode ? "Update Profile" : "Register Company"}';
+                    this.style.opacity = '1';
+                    this.style.cursor = 'pointer';
                     return;
                   }
                   
@@ -302,14 +313,44 @@ export default function RegisterPage() {
                   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                   if (!emailRegex.test(window.registrationData.email)) {
                     alert('Please enter a valid email address');
+                    // Re-enable button
+                    this.disabled = false;
+                    this.innerHTML = '${isEditMode ? "Update Profile" : "Register Company"}';
+                    this.style.opacity = '1';
+                    this.style.cursor = 'pointer';
                     return;
                   }
                   
-                  alert('Registration data collected! Check console for details.');
-                  console.log('Ready to submit:', window.registrationData);
-                  
-                  // Here you can add actual form submission logic
-                  // For now, just showing the data is captured correctly
+                  // Submit to backend API
+                  fetch('/api/register', {
+                    method: '${isEditMode ? "PUT" : "POST"}',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(window.registrationData)
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log('API Response:', data);
+                    if (data.success) {
+                      alert('${isEditMode ? "Profile updated successfully!" : "Company registered successfully!"}');
+                      // Redirect to projects page
+                      window.location.href = '/projects';
+                    } else {
+                      alert('${isEditMode ? "Update" : "Registration"} failed: ' + (data.error || 'Unknown error'));
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Submit error:', error);
+                    alert('Network error. Please check your connection and try again.');
+                  })
+                  .finally(() => {
+                    // Re-enable button
+                    this.disabled = false;
+                    this.innerHTML = '${isEditMode ? "Update Profile" : "Register Company"}';
+                    this.style.opacity = '1';
+                    this.style.cursor = 'pointer';
+                  });
                 " 
                 style="
                   width: 100%; 
