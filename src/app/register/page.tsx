@@ -135,8 +135,107 @@ export default function RegisterPage() {
 
 
   return (
-    <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20" style={{ pointerEvents: 'auto' }}>
-      <div className="max-w-lg w-full p-8 shadow-2xl rounded-2xl bg-white bg-opacity-95 backdrop-blur-sm border border-white border-opacity-30 relative z-30" style={{ pointerEvents: 'auto' }}>
+    <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20">
+      {/* Simple HTML Form - Fixed Position */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 99999,
+          isolation: 'isolate'
+        }}
+        dangerouslySetInnerHTML={{
+          __html: `
+            <div style="
+              background: white;
+              padding: 40px;
+              border-radius: 16px;
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+              max-width: 500px;
+              width: 90vw;
+              max-height: 80vh;
+              overflow-y: auto;
+            ">
+              <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px; text-align: center; color: #1f2937;">
+                ${isEditMode ? "Edit Profile" : "Company Registration"}
+              </h2>
+              
+              <input 
+                id="nameInput"
+                placeholder="Company Name" 
+                value="${form.name.replace(/"/g, '&quot;')}" 
+                oninput="
+                  window.formData = window.formData || {};
+                  window.formData.name = this.value;
+                "
+                style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937; box-sizing: border-box;"
+                required 
+              />
+              
+              <input 
+                id="industryInput"
+                placeholder="Industry Type" 
+                value="${form.industry.replace(/"/g, '&quot;')}" 
+                oninput="
+                  window.formData = window.formData || {};
+                  window.formData.industry = this.value;
+                "
+                style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937; box-sizing: border-box;"
+              />
+              
+              <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+                Email Address
+              </label>
+              <input 
+                id="emailInput"
+                type="email" 
+                placeholder="Email Address" 
+                value="${form.email.replace(/"/g, '&quot;')}" 
+                oninput="
+                  window.formData = window.formData || {};
+                  window.formData.email = this.value;
+                "
+                style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937; box-sizing: border-box;"
+                required 
+              />
+              
+              <button 
+                type="button" 
+                onclick="
+                  console.log('Form data:', window.formData);
+                  if (!window.formData || !window.formData.name || !window.formData.email) {
+                    alert('Please fill in required fields: Company Name and Email');
+                    return;
+                  }
+                  alert('Form submitted! Data: ' + JSON.stringify(window.formData));
+                  // You can add actual form submission logic here
+                "
+                style="width: 100%; background-color: #059669; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 20px;"
+                onmouseover="this.style.backgroundColor='#047857';"
+                onmouseout="this.style.backgroundColor='#059669';"
+              >
+                ${isEditMode ? "Update Profile" : "Register Company"}
+              </button>
+              
+              ${isEditMode ? `
+                <button 
+                  type="button" 
+                  onclick="alert('Edit cancelled');"
+                  style="width: 100%; background-color: #6b7280; color: white; padding: 8px; border: none; border-radius: 8px; font-size: 14px; margin-top: 8px; cursor: pointer;"
+                  onmouseover="this.style.backgroundColor='#4b5563';"
+                  onmouseout="this.style.backgroundColor='#6b7280';"
+                >
+                  Cancel
+                </button>
+              ` : ''}
+            </div>
+          `
+        }}
+      />
+      
+      <div className="max-w-lg w-full p-8 shadow-2xl rounded-2xl bg-white bg-opacity-95 backdrop-blur-sm border border-white border-opacity-30 relative z-30" style={{ visibility: 'hidden' }}>
         
         {!user ? (
           <div className="text-center py-8">
