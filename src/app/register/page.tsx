@@ -13,6 +13,8 @@ export default function RegisterPage() {
     email: "",
     address: "",
     taxId: "",
+    electricityKWh: "",
+    fuelUsage: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -225,6 +227,50 @@ export default function RegisterPage() {
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
               placeholder="Enter your tax ID (optional)"
             />
+          </div>
+
+          {/* Energy Usage Section for Carbon Credit Calculations */}
+          <div className="border-t-2 border-gray-100 pt-6 mt-6">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-bold text-gray-800 mb-2">⚡ Energy Usage Information</h3>
+              <p className="text-sm text-gray-600">Help us calculate your carbon footprint and potential credits</p>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Annual Electricity Usage (kWh)
+                </label>
+                <input 
+                  type="number"
+                  name="electricityKWh" 
+                  value={form.electricityKWh} 
+                  onChange={handleChange} 
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
+                  placeholder="e.g., 50000 kWh per year"
+                  min="0"
+                  step="0.01"
+                />
+                <p className="text-xs text-gray-500 mt-1">💡 Check your electricity bills for annual consumption</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Annual Diesel/Fuel Usage (Liters)
+                </label>
+                <input 
+                  type="number"
+                  name="fuelUsage" 
+                  value={form.fuelUsage} 
+                  onChange={handleChange} 
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
+                  placeholder="e.g., 5000 liters per year"
+                  min="0"
+                  step="0.01"
+                />
+                <p className="text-xs text-gray-500 mt-1">⛽ Include generators, vehicles, and machinery fuel consumption</p>
+              </div>
+            </div>
           </div>
           
           <button 
