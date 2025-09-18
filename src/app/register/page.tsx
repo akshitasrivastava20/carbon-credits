@@ -10,6 +10,17 @@ export default function RegisterPage() {
   const router = useRouter();
   console.log(user?.id); // This is the clerkUserId
 
+  // Add global form update function for HTML inputs
+  useEffect(() => {
+    (window as any).updateFormField = (fieldName: string, value: string) => {
+      setForm(prev => ({ ...prev, [fieldName]: value }));
+    };
+    
+    return () => {
+      delete (window as any).updateFormField;
+    };
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     industry: "",
@@ -245,42 +256,89 @@ export default function RegisterPage() {
               )}
             </div>
             <form onSubmit={handleSubmit} className="space-y-4 relative z-40">
-            <div>
-              <input 
-                name="name" 
-                placeholder="Company Name" 
-                value={form.name} 
-                onChange={handleChange} 
-                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 cursor-text relative z-50" 
-                required 
-                style={{ pointerEvents: 'auto' }}
-              />
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: `
+                  <input 
+                    name="name" 
+                    placeholder="Company Name" 
+                    value="${form.name.replace(/"/g, '&quot;')}" 
+                    oninput="window.updateFormField('name', this.value)"
+                    style="
+                      width: 100%;
+                      padding: 12px;
+                      border: 2px solid #d1d5db;
+                      border-radius: 8px;
+                      font-size: 16px;
+                      pointer-events: auto;
+                      z-index: 99999;
+                      position: relative;
+                      isolation: isolate;
+                      background: white;
+                      color: #1f2937;
+                    "
+                    required 
+                  />
+                `
+              }}
+            />
             
-            <div>
-              <input 
-                name="industry" 
-                placeholder="Industry Type" 
-                value={form.industry} 
-                onChange={handleChange} 
-                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 cursor-text relative z-50" 
-                style={{ pointerEvents: 'auto' }}
-              />
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: `
+                  <input 
+                    name="industry" 
+                    placeholder="Industry Type" 
+                    value="${form.industry.replace(/"/g, '&quot;')}" 
+                    oninput="window.updateFormField('industry', this.value)"
+                    style="
+                      width: 100%;
+                      padding: 12px;
+                      border: 2px solid #d1d5db;
+                      border-radius: 8px;
+                      font-size: 16px;
+                      pointer-events: auto;
+                      z-index: 99999;
+                      position: relative;
+                      isolation: isolate;
+                      background: white;
+                      color: #1f2937;
+                    "
+                  />
+                `
+              }}
+            />
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
               </label>
-              <input 
-                type="email" 
-                name="email" 
-                placeholder="Email Address" 
-                value={form.email} 
-                onChange={handleChange}
-                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800 cursor-text relative z-50" 
-                required 
-                style={{ pointerEvents: 'auto' }}
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    <input 
+                      type="email" 
+                      name="email" 
+                      placeholder="Email Address" 
+                      value="${form.email.replace(/"/g, '&quot;')}" 
+                      oninput="window.updateFormField('email', this.value)"
+                      style="
+                        width: 100%;
+                        padding: 12px;
+                        border: 2px solid #d1d5db;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        pointer-events: auto;
+                        z-index: 99999;
+                        position: relative;
+                        isolation: isolate;
+                        background: white;
+                        color: #1f2937;
+                      "
+                      required 
+                    />
+                  `
+                }}
               />
               <p className="text-xs text-gray-500 mt-1">
                 You can use a different email address for your company registration if needed.
