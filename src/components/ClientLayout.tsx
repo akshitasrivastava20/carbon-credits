@@ -38,7 +38,7 @@ export default function ClientLayout({
       </div>
       
       {/* Content Layer */}
-      <div className="relative z-10 pointer-events-auto">
+      <div className="relative z-10 pointer-events-auto pt-20">
         <main>
           {children}
         </main>
