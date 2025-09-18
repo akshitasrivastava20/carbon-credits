@@ -4,7 +4,7 @@
  * Run this to populate your database with sample projects
  */
 
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { retryPayout, getPayoutStatus } from "@/lib/payout-processor";
 
 const prisma = new PrismaClient();

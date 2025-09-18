@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { verifyWebhookSignature } from "@/lib/dodo";
 import { processSuccessfulPayment } from "@/lib/pricing";
 

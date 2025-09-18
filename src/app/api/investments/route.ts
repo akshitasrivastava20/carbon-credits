@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { createInvestmentPayment, calculateInvestmentTotal, type CarbonCreditInvestment } from "@/lib/dodo";
 

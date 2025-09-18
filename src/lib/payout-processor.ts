@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { getDodoClient } from "./dodo";
 
 const prisma = new PrismaClient();

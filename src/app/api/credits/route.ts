@@ -1,6 +1,6 @@
 // app/api/credits/route.ts
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { calculateCarbonCredits } from "@/lib/calculateCredits";
 
 const prisma = new PrismaClient();
