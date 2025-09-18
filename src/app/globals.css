@@ -148,3 +148,13 @@ input, textarea {
     transform: none !important;
   }
 }
+
+/* Ensure ServerNavBar is always visible and interactive */
+.server-navbar {
+  z-index: 10000 !important;
+  position: fixed !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+}
