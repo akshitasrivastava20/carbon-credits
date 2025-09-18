@@ -11,6 +11,45 @@ import { SignedIn, SignedOut } from '@clerk/nextjs';
 export default function Home() {
   return (
     <div className="relative min-h-screen">
+      {/* Dashboard Button - Clean fixed position */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 99999,
+          isolation: 'isolate'
+        }}
+        dangerouslySetInnerHTML={{
+          __html: `
+            <button 
+              onclick="console.log('Dashboard clicked!'); window.location.href='/register';"
+              onmouseover="this.style.backgroundColor='#047857';"
+              onmouseout="this.style.backgroundColor='#059669';"
+              style="
+                background-color: #059669;
+                color: white;
+                border: none;
+                padding: 16px 32px;
+                border-radius: 8px;
+                font-size: 18px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                pointer-events: auto;
+                z-index: 99999;
+                position: relative;
+                isolation: isolate;
+                display: block;
+                transition: background-color 0.2s ease;
+              "
+            >
+              Dashboard
+            </button>
+          `
+        }}
+      />
+
       {/* Content */}
       <div className="relative z-10">
 
@@ -33,45 +72,6 @@ Track. Offset. Invest.<br/>
               </Link>
             </SignedOut>
           </div>
-
-          {/* Dashboard Button - Back to working fixed position */}
-          <div 
-            style={{
-              position: 'fixed',
-              top: '20px',
-              right: '20px',
-              zIndex: 99999,
-              isolation: 'isolate'
-            }}
-            dangerouslySetInnerHTML={{
-              __html: `
-                <button 
-                  onclick="console.log('Dashboard clicked!'); window.location.href='/register';"
-                  onmouseover="this.style.backgroundColor='#047857';"
-                  onmouseout="this.style.backgroundColor='#059669';"
-                  style="
-                    background-color: #059669;
-                    color: white;
-                    border: none;
-                    padding: 16px 32px;
-                    border-radius: 8px;
-                    font-size: 18px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                    pointer-events: auto;
-                    z-index: 99999;
-                    position: relative;
-                    isolation: isolate;
-                    display: block;
-                    transition: background-color 0.2s ease;
-                  "
-                >
-                  Dashboard
-                </button>
-              `
-            }}
-          />
         </div>
         
         {/* Globe Section */}
