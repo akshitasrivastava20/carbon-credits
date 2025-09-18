@@ -4,11 +4,6 @@ const nextConfig: NextConfig = {
   /* config options here */
   turbopack: {
     root: process.cwd(),
-  },
-  experimental: {
-    turbo: {
-      root: process.cwd(),
-    }
   }
 };
 
