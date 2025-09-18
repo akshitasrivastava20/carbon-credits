@@ -11,12 +11,12 @@ import { SignedIn, SignedOut } from '@clerk/nextjs';
 export default function Home() {
   return (
     <div className="relative min-h-screen">
-      {/* Dashboard Button - Clean fixed position */}
+      {/* Dashboard Button - Left side to avoid Clerk profile button */}
       <div 
         style={{
           position: 'fixed',
           top: '20px',
-          right: '20px',
+          left: '20px',
           zIndex: 99999,
           isolation: 'isolate'
         }}
