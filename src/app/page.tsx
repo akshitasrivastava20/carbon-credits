@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 import Globe from '@/components/ui/globe'
 import { BlurFade } from '@/components/ui/blur-fade';
@@ -24,19 +26,52 @@ Track. Offset. Invest.<br/>
             </h1>
           </BlurFade>
           
-          <div className="mt-8">
+          <div className="mt-8 space-y-4">
             <SignedOut>
               <Link href="/sign-up" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg inline-block">
                 Get Started Today
               </Link>
             </SignedOut>
-
-            <SignedIn>
-              <Link href="/register" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg inline-block">
-                Dashboard
-              </Link>
-            </SignedIn>
           </div>
+
+          {/* Dashboard Button - Back to working fixed position */}
+          <div 
+            style={{
+              position: 'fixed',
+              top: '20px',
+              right: '20px',
+              zIndex: 99999,
+              isolation: 'isolate'
+            }}
+            dangerouslySetInnerHTML={{
+              __html: `
+                <button 
+                  onclick="console.log('Dashboard clicked!'); window.location.href='/register';"
+                  onmouseover="this.style.backgroundColor='#047857';"
+                  onmouseout="this.style.backgroundColor='#059669';"
+                  style="
+                    background-color: #059669;
+                    color: white;
+                    border: none;
+                    padding: 16px 32px;
+                    border-radius: 8px;
+                    font-size: 18px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                    pointer-events: auto;
+                    z-index: 99999;
+                    position: relative;
+                    isolation: isolate;
+                    display: block;
+                    transition: background-color 0.2s ease;
+                  "
+                >
+                  Dashboard
+                </button>
+              `
+            }}
+          />
         </div>
         
         {/* Globe Section */}
@@ -47,12 +82,7 @@ Track. Offset. Invest.<br/>
         {/* Typewriter Effect Section */}
         <TypewriterEffectSection />
         
-        {/* Credits Button Section */}
-        <div className="flex justify-center py-10">
-          <Link href="/credits" className="bg-white hover:bg-gray-50 text-black border-2 border-gray-300 hover:border-gray-400 px-8 py-4 rounded-3xl text-lg font-semibold transition-colors shadow-lg inline-block">
-            Your Credits
-          </Link>
-        </div>
+
         
         {/* 3D Card Demo Section */}
         <ThreeDCardDemo />

@@ -55,8 +55,96 @@ body {
     user-select: auto;
   }
   
-  input, button, textarea {
+  input, button, textarea, a, [role="button"] {
     pointer-events: auto !important;
     touch-action: manipulation !important;
+  }
+  
+  /* Fix for any overlay or z-index issues */
+  body, html {
+    overflow-x: hidden;
+    position: relative;
+  }
+  
+  /* Ensure no invisible overlays are blocking clicks */
+  .cl-card, .cl-main, .cl-rootBox, .cl-component {
+    isolation: isolate;
+  }
+}
+
+/* Global fixes for click issues */
+a, button, input, textarea, select, [role="button"], [tabindex] {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+input, textarea {
+  cursor: text !important;
+}
+
+/* Fix any framer-motion or animation interference */
+[data-framer-name], .motion-div {
+  pointer-events: auto !important;
+}
+
+/* Comprehensive desktop interaction fixes */
+@media (min-width: 1024px) {
+  /* Force all interactive elements to be clickable on desktop */
+  a[href], button, input, textarea, select, [role="button"], [tabindex] {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10 !important;
+    display: inline-block !important;
+    touch-action: manipulation !important;
+  }
+  
+  /* Specific input field fixes */
+  input, textarea {
+    cursor: text !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+  
+  /* Remove any potential overlays blocking clicks */
+  *::before, *::after {
+    pointer-events: none !important;
+  }
+  
+  /* Fix any transform or animation interference */
+  * {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Re-enable transitions only for hover states */
+  a:hover, button:hover {
+    transition: background-color 0.2s ease !important;
+  }
+  
+  /* Disable any CSS that might interfere with clicks */
+  * {
+    -webkit-touch-callout: auto !important;
+    -webkit-user-select: auto !important;
+    -khtml-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+  }
+  
+  /* Force Clerk forms to be interactive */
+  .cl-card *, .cl-main *, .cl-rootBox * {
+    pointer-events: auto !important;
+    position: static !important;
+  }
+  
+  /* Fix for any framer-motion interference */
+  [data-framer-name] *, .motion-div * {
+    pointer-events: auto !important;
+    transform: none !important;
   }
 }
