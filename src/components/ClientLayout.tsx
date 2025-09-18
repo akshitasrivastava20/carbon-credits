@@ -1,12 +1,22 @@
 "use client";
 
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/nextjs';
+import { NavBar } from '@/components/ui/tubelight-navbar';
+import { Home as HomeIcon, Info, CreditCard, Building2, Leaf } from 'lucide-react';
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const navItems = [
+    { name: "Home", url: "/", icon: HomeIcon },
+    { name: "About", url: "/about", icon: Info },
+    { name: "Projects", url: "/projects", icon: Leaf },
+    { name: "Credits", url: "/credits", icon: CreditCard },
+    { name: "Register", url: "/register", icon: Building2 },
+  ];
+
   return (
     <div className="relative min-h-screen">
       {/* Background Image Layer */}
@@ -17,6 +27,9 @@ export default function ClientLayout({
           backgroundSize: '120px 120px',
         }}
       ></div>
+      
+      {/* Navigation Bar - Available on all pages */}
+      <NavBar items={navItems} />
       
       {/* Auth Section */}
       <div className="fixed top-6 right-6 z-50">
