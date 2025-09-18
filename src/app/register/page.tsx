@@ -35,6 +35,40 @@ export default function RegisterPage() {
     }
   }, [user?.id]);
 
+  // Handle the specific overlapping element that was blocking form interactions
+  useEffect(() => {
+    const handleOverlappingElements = () => {
+      // Hide the exact overlapping element that was identified in DevTools
+      const overlappingElement = document.querySelector('.fixed.bottom-0.sm\\:top-0.left-1\\/2.-translate-x-1\\/2.z-50.mb-6.sm\\:pt-6');
+      if (overlappingElement) {
+        (overlappingElement as HTMLElement).style.display = 'none';
+        console.log('Overlapping element hidden successfully');
+      }
+
+      // Also check for similar problematic elements
+      const similarElements = document.querySelectorAll('.fixed.bottom-0, .fixed[class*="bottom-0"]');
+      similarElements.forEach((element) => {
+        const htmlElement = element as HTMLElement;
+        const classList = htmlElement.className;
+        
+        // Hide elements that match the problematic pattern
+        if (classList.includes('fixed') && 
+            classList.includes('bottom-0') && 
+            classList.includes('z-50')) {
+          htmlElement.style.display = 'none';
+          console.log('Similar overlapping element hidden');
+        }
+      });
+    };
+
+    // Run immediately and also after a short delay to catch dynamically loaded elements
+    handleOverlappingElements();
+    const timer = setTimeout(handleOverlappingElements, 500);
+    
+    // Clean up
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -101,8 +135,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-6" 
+      style={{ 
+        position: 'relative', 
+        zIndex: 99999,
+        isolation: 'isolate' 
+      }}
+    >
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 border border-gray-100" style={{ position: 'relative', zIndex: 10000 }}>
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +154,7 @@ export default function RegisterPage() {
           <p className="text-gray-600">Join our carbon credits platform</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" style={{ position: 'relative', zIndex: 10001 }}>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Company Name *
