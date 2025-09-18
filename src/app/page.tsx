@@ -24,19 +24,23 @@ Track. Offset. Invest.<br/>
             </h1>
           </BlurFade>
           
-          <BlurFade delay={0.5} inView>
+          <div className="mt-8">
             <SignedOut>
-              <CustomButton href="/sign-up">
-                Get Started Today
-              </CustomButton>
+              <BlurFade delay={0.5} inView>
+                <CustomButton href="/sign-up">
+                  Get Started Today
+                </CustomButton>
+              </BlurFade>
             </SignedOut>
 
             <SignedIn>
-              <CustomButton href="/register">
-                Dashboard
-              </CustomButton>
+              <BlurFade delay={0.5} inView>
+                <CustomButton href="/register">
+                  Dashboard
+                </CustomButton>
+              </BlurFade>
             </SignedIn>
-          </BlurFade>
+          </div>
         </div>
         
         {/* Globe Section */}
@@ -48,11 +52,13 @@ Track. Offset. Invest.<br/>
         <TypewriterEffectSection />
         
         {/* Credits Button Section */}
-        <div className="flex justify-center py-10">
-          <CustomButton href="/credits" variant="secondary" className="rounded-3xl">
-            Your Credits
-          </CustomButton>
-        </div>
+        <BlurFade delay={0.3} inView>
+          <div className="flex justify-center py-10">
+            <CustomButton href="/credits" variant="secondary" className="rounded-3xl">
+              Your Credits
+            </CustomButton>
+          </div>
+        </BlurFade>
         
         {/* 3D Card Demo Section */}
         <ThreeDCardDemo />
