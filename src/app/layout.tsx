@@ -22,6 +22,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
+          {/* Background Image Layer */}
+          <div 
+            className="fixed inset-0 bg-repeat z-0 pointer-events-none"
+            style={{ 
+              backgroundImage: "url('/chatgpt-background.png')",
+              backgroundSize: '120px 120px',
+            }}
+          ></div>
+          
           {/* Server-side Navigation Bar */}
           <ServerNavBar />
           

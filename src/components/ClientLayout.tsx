@@ -9,14 +9,6 @@ export default function ClientLayout({
 }) {
   return (
     <div className="relative min-h-screen">
-      {/* Background Image Layer */}
-      <div 
-        className="fixed inset-0 bg-repeat z-0 pointer-events-none"
-        style={{ 
-          backgroundImage: "url('/chatgpt-background.png')",
-          backgroundSize: '120px 120px',
-        }}
-      ></div>
       
       {/* Auth Section */}
       <div className="fixed top-6 right-6 z-50">
