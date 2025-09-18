@@ -1,10 +1,10 @@
+import Link from 'next/link';
 import Globe from '@/components/ui/globe'
 import { BlurFade } from '@/components/ui/blur-fade';
 import { ThreeDCardDemo } from '@/components/cardComponent';
 import TypewriterEffectSection from '@/components/TypewriterEffectSection';
 import { Footer } from '@/components/ui/large-name-footer';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
-import CustomButton from '@/components/CustomButton';
 
 export default function Home() {
   return (
@@ -26,19 +26,15 @@ Track. Offset. Invest.<br/>
           
           <div className="mt-8">
             <SignedOut>
-              <BlurFade delay={0.5} inView>
-                <CustomButton href="/sign-up">
-                  Get Started Today
-                </CustomButton>
-              </BlurFade>
+              <Link href="/sign-up" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg inline-block">
+                Get Started Today
+              </Link>
             </SignedOut>
 
             <SignedIn>
-              <BlurFade delay={0.5} inView>
-                <CustomButton href="/register">
-                  Dashboard
-                </CustomButton>
-              </BlurFade>
+              <Link href="/register" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg inline-block">
+                Dashboard
+              </Link>
             </SignedIn>
           </div>
         </div>
@@ -52,13 +48,11 @@ Track. Offset. Invest.<br/>
         <TypewriterEffectSection />
         
         {/* Credits Button Section */}
-        <BlurFade delay={0.3} inView>
-          <div className="flex justify-center py-10">
-            <CustomButton href="/credits" variant="secondary" className="rounded-3xl">
-              Your Credits
-            </CustomButton>
-          </div>
-        </BlurFade>
+        <div className="flex justify-center py-10">
+          <Link href="/credits" className="bg-white hover:bg-gray-50 text-black border-2 border-gray-300 hover:border-gray-400 px-8 py-4 rounded-3xl text-lg font-semibold transition-colors shadow-lg inline-block">
+            Your Credits
+          </Link>
+        </div>
         
         {/* 3D Card Demo Section */}
         <ThreeDCardDemo />
