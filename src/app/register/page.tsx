@@ -2,32 +2,21 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-
 
 export default function RegisterPage() {
   const { user } = useUser();
   const router = useRouter();
-  console.log(user?.id); // This is the clerkUserId
 
   const [form, setForm] = useState({
     name: "",
     industry: "",
-    email: user?.primaryEmailAddress?.emailAddress || "",
+    email: "",
     address: "",
-    certificateUrl: "",
     taxId: "",
-    electricityKWh: "",
-    fuelUsage: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingRegistration, setIsCheckingRegistration] = useState(true);
-  const [companyData, setCompanyData] = useState<any>(null);
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [creditsData, setCreditsData] = useState<any>(null);
-  const [isCalculatingCredits, setIsCalculatingCredits] = useState(false);
 
   // Update form email when user data is available
   useEffect(() => {
@@ -39,44 +28,10 @@ export default function RegisterPage() {
     }
   }, [user?.primaryEmailAddress?.emailAddress]);
 
-  // Check if company is already registered
+  // Check registration status
   useEffect(() => {
-    const checkRegistration = async () => {
-      if (!user?.id) return;
-      
-      try {
-        const response = await fetch("/api/credits/me");
-        const data = await response.json();
-        
-        if (data.success && data.company) {
-          setIsRegistered(true);
-          setCompanyData(data.company);
-          // Populate form with existing data for editing
-          const electricityUsage = data.usages?.find((u: any) => u.type === 'ELECTRICITY');
-          const fuelUsage = data.usages?.find((u: any) => u.type === 'DIESEL');
-          
-          setForm({
-            name: data.company.name || "",
-            industry: data.company.industry || "",
-            email: data.company.email || "",
-            address: data.company.address || "",
-            certificateUrl: data.company.certificateUrl || "",
-            taxId: data.company.taxId || "",
-            electricityKWh: electricityUsage?.amount?.toString() || "",
-            fuelUsage: fuelUsage?.amount?.toString() || "",
-          });
-        } else if (data.needsRegistration) {
-          setIsRegistered(false);
-        }
-      } catch (error) {
-        console.error("Error checking registration:", error);
-      } finally {
-        setIsCheckingRegistration(false);
-      }
-    };
-
     if (user?.id) {
-      checkRegistration();
+      setIsCheckingRegistration(false);
     }
   }, [user?.id]);
 
@@ -86,329 +41,185 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!form.name || !form.email) {
+      alert('Please fill in required fields: Company Name and Email');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      // Determine if we're updating or creating
-      const url = "/api/register";
-      const method = isEditMode ? "PUT" : "POST";
-      
-      // Send form data - user ID will be extracted from auth token on backend
-      const res = await fetch(url, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
       
       const data = await res.json();
       
       if (data.success) {
-        if (isEditMode) {
-          alert("Profile updated successfully!");
-          // Update company data and exit edit mode
-          setCompanyData(data.company);
-          setIsEditMode(false);
-        } else {
-          alert("Company registered successfully!");
-          // Redirect to projects page after successful registration
-          router.push("/project");
-        }
+        alert('Company registered successfully!');
+        router.push('/projects');
       } else {
-        if (res.status === 503) {
-          alert("Database is temporarily unavailable. Please try again in a moment.");
-        } else {
-          alert(`${isEditMode ? "Update" : "Registration"} failed: ` + (data.error || "Unknown error"));
-        }
+        alert('Registration failed: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
-      console.error("Submit error:", error);
-      alert("Network error. Please check your connection and try again.");
+      console.error('Submit error:', error);
+      alert('Network error. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCalculateCredits = () => {
-    router.push("/credits");
-  };
-
-
-
-  return (
-    <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20">
-      {/* Working Registration Form */}
-      <div 
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 99999,
-          isolation: 'isolate'
-        }}
-        dangerouslySetInnerHTML={{
-          __html: `
-            <div style="
-              background: white; 
-              padding: 30px; 
-              border-radius: 12px; 
-              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-              max-width: 450px;
-              width: 90vw;
-              max-height: 85vh;
-              overflow-y: auto;
-            ">
-              <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px; text-align: center; color: #1f2937;">
-                ${isEditMode ? "Edit Profile" : "Company Registration"}
-              </h2>
-              
-              <input 
-                id="companyName"
-                placeholder="Company Name *" 
-                style="
-                  width: 100%; 
-                  padding: 12px; 
-                  border: 2px solid #d1d5db; 
-                  border-radius: 8px; 
-                  font-size: 16px;
-                  margin-bottom: 15px;
-                  display: block;
-                  box-sizing: border-box;
-                  background: white;
-                  color: #1f2937;
-                "
-                onfocus="this.style.border='2px solid #059669';"
-                onblur="this.style.border='2px solid #d1d5db';"
-                oninput="
-                  window.registrationData = window.registrationData || {};
-                  window.registrationData.name = this.value;
-                  console.log('Company name:', this.value);
-                "
-              />
-              
-              <input 
-                id="industry"
-                placeholder="Industry Type" 
-                style="
-                  width: 100%; 
-                  padding: 12px; 
-                  border: 2px solid #d1d5db; 
-                  border-radius: 8px; 
-                  font-size: 16px;
-                  margin-bottom: 15px;
-                  display: block;
-                  box-sizing: border-box;
-                  background: white;
-                  color: #1f2937;
-                "
-                onfocus="this.style.border='2px solid #059669';"
-                onblur="this.style.border='2px solid #d1d5db';"
-                oninput="
-                  window.registrationData = window.registrationData || {};
-                  window.registrationData.industry = this.value;
-                "
-              />
-              
-              <input 
-                id="email"
-                type="email"
-                placeholder="Email Address *" 
-                value="${form.email.replace(/"/g, '&quot;')}"
-                style="
-                  width: 100%; 
-                  padding: 12px; 
-                  border: 2px solid #d1d5db; 
-                  border-radius: 8px; 
-                  font-size: 16px;
-                  margin-bottom: 15px;
-                  display: block;
-                  box-sizing: border-box;
-                  background: white;
-                  color: #1f2937;
-                "
-                onfocus="this.style.border='2px solid #059669';"
-                onblur="this.style.border='2px solid #d1d5db';"
-                oninput="
-                  window.registrationData = window.registrationData || {};
-                  window.registrationData.email = this.value;
-                "
-              />
-              
-              <input 
-                id="address"
-                placeholder="Company Address (Optional)" 
-                style="
-                  width: 100%; 
-                  padding: 12px; 
-                  border: 2px solid #d1d5db; 
-                  border-radius: 8px; 
-                  font-size: 16px;
-                  margin-bottom: 15px;
-                  display: block;
-                  box-sizing: border-box;
-                  background: white;
-                  color: #1f2937;
-                "
-                onfocus="this.style.border='2px solid #059669';"
-                onblur="this.style.border='2px solid #d1d5db';"
-                oninput="
-                  window.registrationData = window.registrationData || {};
-                  window.registrationData.address = this.value;
-                "
-              />
-              
-              <input 
-                id="taxId"
-                placeholder="Tax ID/PAN/GST (Optional)" 
-                style="
-                  width: 100%; 
-                  padding: 12px; 
-                  border: 2px solid #d1d5db; 
-                  border-radius: 8px; 
-                  font-size: 16px;
-                  margin-bottom: 20px;
-                  display: block;
-                  box-sizing: border-box;
-                  background: white;
-                  color: #1f2937;
-                "
-                onfocus="this.style.border='2px solid #059669';"
-                onblur="this.style.border='2px solid #d1d5db';"
-                oninput="
-                  window.registrationData = window.registrationData || {};
-                  window.registrationData.taxId = this.value;
-                "
-              />
-              
-              <button 
-                onclick="
-                  // Disable button and show loading
-                  this.disabled = true;
-                  this.innerHTML = 'Registering...';
-                  this.style.opacity = '0.6';
-                  this.style.cursor = 'not-allowed';
-                  
-                  window.registrationData = window.registrationData || {};
-                  
-                  // Get current values from inputs
-                  window.registrationData.name = document.getElementById('companyName').value;
-                  window.registrationData.industry = document.getElementById('industry').value;
-                  window.registrationData.email = document.getElementById('email').value;
-                  window.registrationData.address = document.getElementById('address').value;
-                  window.registrationData.taxId = document.getElementById('taxId').value;
-                  
-                  console.log('Registration data:', window.registrationData);
-                  
-                  if (!window.registrationData.name || !window.registrationData.email) {
-                    alert('Please fill in required fields: Company Name and Email');
-                    // Re-enable button
-                    this.disabled = false;
-                    this.innerHTML = '${isEditMode ? "Update Profile" : "Register Company"}';
-                    this.style.opacity = '1';
-                    this.style.cursor = 'pointer';
-                    return;
-                  }
-                  
-                  // Basic email validation
-                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                  if (!emailRegex.test(window.registrationData.email)) {
-                    alert('Please enter a valid email address');
-                    // Re-enable button
-                    this.disabled = false;
-                    this.innerHTML = '${isEditMode ? "Update Profile" : "Register Company"}';
-                    this.style.opacity = '1';
-                    this.style.cursor = 'pointer';
-                    return;
-                  }
-                  
-                  // Submit to backend API
-                  fetch('/api/register', {
-                    method: '${isEditMode ? "PUT" : "POST"}',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(window.registrationData)
-                  })
-                  .then(response => response.json())
-                  .then(data => {
-                    console.log('API Response:', data);
-                    if (data.success) {
-                      alert('${isEditMode ? "Profile updated successfully!" : "Company registered successfully!"}');
-                      // Redirect to projects page
-                      window.location.href = '/projects';
-                    } else {
-                      alert('${isEditMode ? "Update" : "Registration"} failed: ' + (data.error || 'Unknown error'));
-                    }
-                  })
-                  .catch(error => {
-                    console.error('Submit error:', error);
-                    alert('Network error. Please check your connection and try again.');
-                  })
-                  .finally(() => {
-                    // Re-enable button
-                    this.disabled = false;
-                    this.innerHTML = '${isEditMode ? "Update Profile" : "Register Company"}';
-                    this.style.opacity = '1';
-                    this.style.cursor = 'pointer';
-                  });
-                " 
-                style="
-                  width: 100%; 
-                  background-color: #059669; 
-                  color: white; 
-                  border: none; 
-                  padding: 14px; 
-                  border-radius: 8px; 
-                  font-size: 18px; 
-                  font-weight: 600; 
-                  cursor: pointer;
-                  transition: background-color 0.2s ease;
-                "
-                onmouseover="this.style.backgroundColor='#047857';"
-                onmouseout="this.style.backgroundColor='#059669';"
-              >
-                ${isEditMode ? "Update Profile" : "Register Company"}
-              </button>
-              
-              ${isEditMode ? `
-                <button 
-                  onclick="alert('Edit cancelled - you can close this form');" 
-                  style="
-                    width: 100%; 
-                    background-color: #6b7280; 
-                    color: white; 
-                    border: none; 
-                    padding: 10px; 
-                    border-radius: 8px; 
-                    font-size: 14px; 
-                    cursor: pointer;
-                    margin-top: 10px;
-                  "
-                  onmouseover="this.style.backgroundColor='#4b5563';"
-                  onmouseout="this.style.backgroundColor='#6b7280';"
-                >
-                  Cancel
-                </button>
-              ` : ''}
-            </div>
-          `
-        }}
-      />
-      
-      {/* Status displays for loading states - only visible when needed */}
-      {!user && (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading user information...</p>
         </div>
-      )}
-        
-      {isCheckingRegistration && (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+      </div>
+    );
+  }
+
+  if (isCheckingRegistration) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Checking registration status...</p>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-6">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Company Registration</h1>
+          <p className="text-gray-600">Join our carbon credits platform</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Company Name *
+            </label>
+            <input 
+              type="text"
+              name="name" 
+              value={form.name} 
+              onChange={handleChange} 
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
+              placeholder="Enter your company name"
+              required 
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Industry Type
+            </label>
+            <input 
+              type="text"
+              name="industry" 
+              value={form.industry} 
+              onChange={handleChange} 
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
+              placeholder="e.g., Manufacturing, Technology, etc."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Email Address *
+            </label>
+            <input 
+              type="email" 
+              name="email" 
+              value={form.email} 
+              onChange={handleChange}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
+              placeholder="Enter your email address"
+              required 
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Company Address
+            </label>
+            <input 
+              type="text"
+              name="address" 
+              value={form.address} 
+              onChange={handleChange} 
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
+              placeholder="Enter your company address (optional)"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Tax ID/PAN/GST
+            </label>
+            <input 
+              type="text"
+              name="taxId" 
+              value={form.taxId} 
+              onChange={handleChange} 
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 text-gray-800 bg-white placeholder-gray-400"
+              placeholder="Enter your tax ID (optional)"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                Registering Your Company...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Register Company
+              </span>
+            )}
+          </button>
+        </form>
+        
+        <div className="mt-8 text-center border-t border-gray-200 pt-6">
+          <p className="text-sm text-gray-600">
+            Already registered? 
+            <button 
+              type="button"
+              onClick={() => router.push('/projects')}
+              className="ml-2 text-green-600 hover:text-green-700 font-semibold hover:underline transition-colors"
+            >
+              View Projects →
+            </button>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
