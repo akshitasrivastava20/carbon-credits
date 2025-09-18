@@ -37,10 +37,12 @@ Track. Offset. Invest.<br/>
             </SignedOut>
 
             <SignedIn>
-              <Link href="/register">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg">
-                 dashboard
-                </button>
+              <Link 
+                href="/register"
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg cursor-pointer inline-block"
+                style={{ pointerEvents: 'auto' }}
+              >
+                Dashboard
               </Link>
             </SignedIn>
           </BlurFade>
