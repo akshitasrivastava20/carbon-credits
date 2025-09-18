@@ -3,6 +3,7 @@ import { Inter} from "next/font/google";
 import "./globals.css";
 import ClientLayout from '@/components/ClientLayout';
 import { ClerkProvider } from '@clerk/nextjs';
+import { ServerNavBar } from '@/components/ServerNavBar';
 
 const inter=Inter ({subsets:["latin"]});
 
@@ -21,6 +22,9 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
+          {/* Server-side Navigation Bar */}
+          <ServerNavBar />
+          
           <ClientLayout>
             {children}
           </ClientLayout>
