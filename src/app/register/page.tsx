@@ -132,26 +132,7 @@ export default function RegisterPage() {
     router.push("/credits");
   };
 
-  // Add global form update function for HTML inputs
-  useEffect(() => {
-    (window as any).updateFormField = (fieldName: string, value: string) => {
-      setForm(prev => ({ ...prev, [fieldName]: value }));
-    };
-    
-    (window as any).submitRegistrationForm = () => {
-      handleSubmit({ preventDefault: () => {} } as React.FormEvent);
-    };
-    
-    (window as any).cancelEdit = () => {
-      setIsEditMode(false);
-    };
-    
-    return () => {
-      delete (window as any).updateFormField;
-      delete (window as any).submitRegistrationForm;
-      delete (window as any).cancelEdit;
-    };
-  }, [handleSubmit, setIsEditMode]);
+
 
   return (
     <div className="min-h-screen pt-20 px-6 flex items-center justify-center relative z-20" style={{ pointerEvents: 'auto' }}>
@@ -265,107 +246,169 @@ export default function RegisterPage() {
                 </button>
               )}
             </div>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: `
-                  <form id="registrationForm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
-                    <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px; text-align: center; color: #1f2937;">
-                      ${isEditMode ? "Edit Profile" : "Company Registration"}
-                    </h2>
-                    
-                    <input 
-                      name="name" 
-                      placeholder="Company Name" 
-                      value="${form.name.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('name', this.value)"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937;"
-                      required 
-                    />
-                    
-                    <input 
-                      name="industry" 
-                      placeholder="Industry Type" 
-                      value="${form.industry.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('industry', this.value)"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937;"
-                    />
-                    
-                    <label style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-                      Email Address
-                    </label>
-                    <input 
-                      type="email" 
-                      name="email" 
-                      placeholder="Email Address" 
-                      value="${form.email.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('email', this.value)"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937;"
-                      required 
-                    />
-                    
-                    <input 
-                      name="address" 
-                      placeholder="Company Address (Optional)" 
-                      value="${form.address.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('address', this.value)"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937;"
-                    />
-                    
-                    <input 
-                      name="certificateUrl" 
-                      placeholder="Certificate File URL (Optional)" 
-                      value="${form.certificateUrl.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('certificateUrl', this.value)"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937;"
-                    />
-                    
-                    <input 
-                      name="taxId" 
-                      placeholder="Tax ID/PAN/GST (Optional)" 
-                      value="${form.taxId.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('taxId', this.value)"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 24px; background: white; color: #1f2937;"
-                    />
-                    
-                    <h3 style="font-size: 18px; font-weight: 600; color: #374151; margin-bottom: 8px; text-align: center;">Energy Usage Information</h3>
-                    <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px; text-align: center;">Help us calculate your carbon footprint (Optional)</p>
-                    
-                    <input 
-                      name="electricityKWh" 
-                      placeholder="Annual Electricity Usage (kWh)" 
-                      value="${form.electricityKWh.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('electricityKWh', this.value)"
-                      type="number" 
-                      min="0" 
-                      step="0.01"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 16px; background: white; color: #1f2937;"
-                    />
-                    
-                    <input 
-                      name="fuelUsage" 
-                      placeholder="Annual Diesel/Fuel Usage (Liters)" 
-                      value="${form.fuelUsage.replace(/"/g, '&quot;')}" 
-                      oninput="window.updateFormField('fuelUsage', this.value)"
-                      type="number" 
-                      min="0" 
-                      step="0.01"
-                      style="width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 16px; margin-bottom: 24px; background: white; color: #1f2937;"
-                    />
-                    
-                    <button 
-                      type="button" 
-                      onclick="window.submitRegistrationForm()"
-                      ${isSubmitting ? 'disabled' : ''}
-                      style="width: 100%; background-color: #059669; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: ${isSubmitting ? 'not-allowed' : 'pointer'}; opacity: ${isSubmitting ? '0.6' : '1'};"
-                    >
-                      ${isSubmitting ? (isEditMode ? "Updating..." : "Registering...") : (isEditMode ? "Update Profile" : "Register Company")}
-                    </button>
-                    
-                    ${isEditMode ? '<button type="button" onclick="window.cancelEdit()" style="width: 100%; background-color: #6b7280; color: white; padding: 8px; border: none; border-radius: 8px; font-size: 14px; margin-top: 8px; cursor: pointer;">Cancel</button>' : ''}
-                  </form>
-                `
-              }}
-            />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input 
+                name="name" 
+                placeholder="Company Name" 
+                value={form.name} 
+                onChange={handleChange} 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                required 
+                style={{ 
+                  pointerEvents: 'auto',
+                  position: 'relative',
+                  zIndex: 50,
+                  isolation: 'isolate',
+                  background: 'white !important'
+                }}
+              />
+              
+              <input 
+                name="industry" 
+                placeholder="Industry Type" 
+                value={form.industry} 
+                onChange={handleChange} 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                style={{ 
+                  pointerEvents: 'auto',
+                  position: 'relative',
+                  zIndex: 50,
+                  isolation: 'isolate',
+                  background: 'white !important'
+                }}
+              />
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  placeholder="Email Address" 
+                  value={form.email} 
+                  onChange={handleChange}
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                  required 
+                  style={{ 
+                    pointerEvents: 'auto',
+                    position: 'relative',
+                    zIndex: 50,
+                    isolation: 'isolate',
+                    background: 'white !important'
+                  }}
+                />
+              </div>
+              
+              <input 
+                name="address" 
+                placeholder="Company Address (Optional)" 
+                value={form.address} 
+                onChange={handleChange} 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                style={{ 
+                  pointerEvents: 'auto',
+                  position: 'relative',
+                  zIndex: 50,
+                  isolation: 'isolate',
+                  background: 'white !important'
+                }}
+              />
+
+              <input 
+                name="certificateUrl" 
+                placeholder="Certificate File URL (Optional)" 
+                value={form.certificateUrl} 
+                onChange={handleChange} 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                style={{ 
+                  pointerEvents: 'auto',
+                  position: 'relative',
+                  zIndex: 50,
+                  isolation: 'isolate',
+                  background: 'white !important'
+                }}
+              />
+              
+              <input 
+                name="taxId" 
+                placeholder="Tax ID/PAN/GST (Optional)" 
+                value={form.taxId} 
+                onChange={handleChange} 
+                className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                style={{ 
+                  pointerEvents: 'auto',
+                  position: 'relative',
+                  zIndex: 50,
+                  isolation: 'isolate',
+                  background: 'white !important'
+                }}
+              />
+              
+              <div className="border-t-2 border-gray-200 pt-6 mt-6">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">Energy Usage Information</h3>
+                <p className="text-sm text-gray-600 mb-4 text-center">Help us calculate your carbon footprint (Optional)</p>
+                
+                <div className="space-y-4">
+                  <input 
+                    name="electricityKWh" 
+                    placeholder="Annual Electricity Usage (kWh)" 
+                    value={form.electricityKWh} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                    type="number" 
+                    min="0" 
+                    step="0.01" 
+                    style={{ 
+                      pointerEvents: 'auto',
+                      position: 'relative',
+                      zIndex: 50,
+                      isolation: 'isolate',
+                      background: 'white !important'
+                    }}
+                  />
+                  
+                  <input 
+                    name="fuelUsage" 
+                    placeholder="Annual Diesel/Fuel Usage (Liters)" 
+                    value={form.fuelUsage} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors placeholder-gray-500 text-gray-800" 
+                    type="number" 
+                    min="0" 
+                    step="0.01" 
+                    style={{ 
+                      pointerEvents: 'auto',
+                      position: 'relative',
+                      zIndex: 50,
+                      isolation: 'isolate',
+                      background: 'white !important'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 focus:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold text-lg shadow-lg mt-6"
+                style={{ 
+                  pointerEvents: 'auto',
+                  position: 'relative',
+                  zIndex: 50,
+                  isolation: 'isolate'
+                }}
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    {isEditMode ? "Updating..." : "Registering..."}
+                  </span>
+                ) : (
+                  isEditMode ? "Update Profile" : "Register Company"
+                )}
+              </button>
+            </form>
           </div>
         )}
       </div>
